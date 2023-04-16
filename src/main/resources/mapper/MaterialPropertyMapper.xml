@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meteor.jsherp.mapper.MaterialPropertyMapper">
+
+    <resultMap id="BaseResultMap" type="com.meteor.jsherp.domain.MaterialProperty">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="nativeName" column="native_name" jdbcType="VARCHAR"/>
+            <result property="enabled" column="enabled" jdbcType="BIT"/>
+            <result property="sort" column="sort" jdbcType="VARCHAR"/>
+            <result property="anotherName" column="another_name" jdbcType="VARCHAR"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,native_name,enabled,
+        sort,another_name,delete_flag
+    </sql>
+</mapper>

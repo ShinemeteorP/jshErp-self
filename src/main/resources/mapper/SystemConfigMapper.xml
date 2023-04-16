@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meteor.jsherp.mapper.SystemConfigMapper">
+
+    <resultMap id="BaseResultMap" type="com.meteor.jsherp.domain.SystemConfig">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="companyName" column="company_name" jdbcType="VARCHAR"/>
+            <result property="companyContacts" column="company_contacts" jdbcType="VARCHAR"/>
+            <result property="companyAddress" column="company_address" jdbcType="VARCHAR"/>
+            <result property="companyTel" column="company_tel" jdbcType="VARCHAR"/>
+            <result property="companyFax" column="company_fax" jdbcType="VARCHAR"/>
+            <result property="companyPostCode" column="company_post_code" jdbcType="VARCHAR"/>
+            <result property="saleAgreement" column="sale_agreement" jdbcType="VARCHAR"/>
+            <result property="depotFlag" column="depot_flag" jdbcType="VARCHAR"/>
+            <result property="customerFlag" column="customer_flag" jdbcType="VARCHAR"/>
+            <result property="minusStockFlag" column="minus_stock_flag" jdbcType="VARCHAR"/>
+            <result property="purchaseBySaleFlag" column="purchase_by_sale_flag" jdbcType="VARCHAR"/>
+            <result property="multiLevelApprovalFlag" column="multi_level_approval_flag" jdbcType="VARCHAR"/>
+            <result property="multiBillType" column="multi_bill_type" jdbcType="VARCHAR"/>
+            <result property="amountApprovalFlag" column="amount_approval_flag" jdbcType="VARCHAR"/>
+            <result property="stockApprovalFlag" column="stock_approval_flag" jdbcType="VARCHAR"/>
+            <result property="tenantId" column="tenant_id" jdbcType="BIGINT"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,company_name,company_contacts,
+        company_address,company_tel,company_fax,
+        company_post_code,sale_agreement,depot_flag,
+        customer_flag,minus_stock_flag,purchase_by_sale_flag,
+        multi_level_approval_flag,multi_bill_type,amount_approval_flag,
+        stock_approval_flag,tenant_id,delete_flag
+    </sql>
+</mapper>

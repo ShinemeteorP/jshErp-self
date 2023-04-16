@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meteor.jsherp.mapper.MaterialMapper">
+
+    <resultMap id="BaseResultMap" type="com.meteor.jsherp.domain.Material">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="categoryId" column="category_id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="mfrs" column="mfrs" jdbcType="VARCHAR"/>
+            <result property="model" column="model" jdbcType="VARCHAR"/>
+            <result property="standard" column="standard" jdbcType="VARCHAR"/>
+            <result property="color" column="color" jdbcType="VARCHAR"/>
+            <result property="unit" column="unit" jdbcType="VARCHAR"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="imgName" column="img_name" jdbcType="VARCHAR"/>
+            <result property="unitId" column="unit_id" jdbcType="BIGINT"/>
+            <result property="expiryNum" column="expiry_num" jdbcType="INTEGER"/>
+            <result property="weight" column="weight" jdbcType="DECIMAL"/>
+            <result property="enabled" column="enabled" jdbcType="BIT"/>
+            <result property="otherField1" column="other_field1" jdbcType="VARCHAR"/>
+            <result property="otherField2" column="other_field2" jdbcType="VARCHAR"/>
+            <result property="otherField3" column="other_field3" jdbcType="VARCHAR"/>
+            <result property="enableSerialNumber" column="enable_serial_number" jdbcType="VARCHAR"/>
+            <result property="enableBatchNumber" column="enable_batch_number" jdbcType="VARCHAR"/>
+            <result property="tenantId" column="tenant_id" jdbcType="BIGINT"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,category_id,name,
+        mfrs,model,standard,
+        color,unit,remark,
+        img_name,unit_id,expiry_num,
+        weight,enabled,other_field1,
+        other_field2,other_field3,enable_serial_number,
+        enable_batch_number,tenant_id,delete_flag
+    </sql>
+</mapper>

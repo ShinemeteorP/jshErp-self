@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meteor.jsherp.mapper.DepotMapper">
+
+    <resultMap id="BaseResultMap" type="com.meteor.jsherp.domain.Depot">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="address" column="address" jdbcType="VARCHAR"/>
+            <result property="warehousing" column="warehousing" jdbcType="DECIMAL"/>
+            <result property="truckage" column="truckage" jdbcType="DECIMAL"/>
+            <result property="type" column="type" jdbcType="INTEGER"/>
+            <result property="sort" column="sort" jdbcType="VARCHAR"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="principal" column="principal" jdbcType="BIGINT"/>
+            <result property="enabled" column="enabled" jdbcType="BIT"/>
+            <result property="tenantId" column="tenant_id" jdbcType="BIGINT"/>
+            <result property="deleteFlag" column="delete_Flag" jdbcType="VARCHAR"/>
+            <result property="isDefault" column="is_default" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,address,
+        warehousing,truckage,type,
+        sort,remark,principal,
+        enabled,tenant_id,delete_Flag,
+        is_default
+    </sql>
+</mapper>

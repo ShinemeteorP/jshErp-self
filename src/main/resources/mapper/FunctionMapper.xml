@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meteor.jsherp.mapper.FunctionMapper">
+
+    <resultMap id="BaseResultMap" type="com.meteor.jsherp.domain.Function">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="number" column="number" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="parentNumber" column="parent_number" jdbcType="VARCHAR"/>
+            <result property="url" column="url" jdbcType="VARCHAR"/>
+            <result property="component" column="component" jdbcType="VARCHAR"/>
+            <result property="state" column="state" jdbcType="BIT"/>
+            <result property="sort" column="sort" jdbcType="VARCHAR"/>
+            <result property="enabled" column="enabled" jdbcType="BIT"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
+            <result property="pushBtn" column="push_btn" jdbcType="VARCHAR"/>
+            <result property="icon" column="icon" jdbcType="VARCHAR"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,number,name,
+        parent_number,url,component,
+        state,sort,enabled,
+        type,push_btn,icon,
+        delete_flag
+    </sql>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meteor.jsherp.mapper.SerialNumberMapper">
+
+    <resultMap id="BaseResultMap" type="com.meteor.jsherp.domain.SerialNumber">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="materialId" column="material_id" jdbcType="BIGINT"/>
+            <result property="depotId" column="depot_id" jdbcType="BIGINT"/>
+            <result property="serialNumber" column="serial_number" jdbcType="VARCHAR"/>
+            <result property="isSell" column="is_sell" jdbcType="VARCHAR"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="creator" column="creator" jdbcType="BIGINT"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="updater" column="updater" jdbcType="BIGINT"/>
+            <result property="inBillNo" column="in_bill_no" jdbcType="VARCHAR"/>
+            <result property="outBillNo" column="out_bill_no" jdbcType="VARCHAR"/>
+            <result property="tenantId" column="tenant_id" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,material_id,depot_id,
+        serial_number,is_sell,remark,
+        delete_flag,create_time,creator,
+        update_time,updater,in_bill_no,
+        out_bill_no,tenant_id
+    </sql>
+</mapper>

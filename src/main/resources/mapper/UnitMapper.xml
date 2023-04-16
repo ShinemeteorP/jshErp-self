@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meteor.jsherp.mapper.UnitMapper">
+
+    <resultMap id="BaseResultMap" type="com.meteor.jsherp.domain.Unit">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="basicUnit" column="basic_unit" jdbcType="VARCHAR"/>
+            <result property="otherUnit" column="other_unit" jdbcType="VARCHAR"/>
+            <result property="otherUnitTwo" column="other_unit_two" jdbcType="VARCHAR"/>
+            <result property="otherUnitThree" column="other_unit_three" jdbcType="VARCHAR"/>
+            <result property="ratio" column="ratio" jdbcType="DECIMAL"/>
+            <result property="ratioTwo" column="ratio_two" jdbcType="DECIMAL"/>
+            <result property="ratioThree" column="ratio_three" jdbcType="DECIMAL"/>
+            <result property="enabled" column="enabled" jdbcType="BIT"/>
+            <result property="tenantId" column="tenant_id" jdbcType="BIGINT"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,basic_unit,
+        other_unit,other_unit_two,other_unit_three,
+        ratio,ratio_two,ratio_three,
+        enabled,tenant_id,delete_flag
+    </sql>
+</mapper>

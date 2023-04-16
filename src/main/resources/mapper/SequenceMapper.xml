@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meteor.jsherp.mapper.SequenceMapper">
+
+    <resultMap id="BaseResultMap" type="com.meteor.jsherp.domain.Sequence">
+            <id property="seqName" column="seq_name" jdbcType="VARCHAR"/>
+            <result property="minValue" column="min_value" jdbcType="BIGINT"/>
+            <result property="maxValue" column="max_value" jdbcType="BIGINT"/>
+            <result property="currentVal" column="current_val" jdbcType="BIGINT"/>
+            <result property="incrementVal" column="increment_val" jdbcType="INTEGER"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        seq_name,min_value,max_value,
+        current_val,increment_val,remark
+    </sql>
+</mapper>

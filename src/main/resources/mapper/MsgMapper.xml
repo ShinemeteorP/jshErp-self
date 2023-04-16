@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meteor.jsherp.mapper.MsgMapper">
+
+    <resultMap id="BaseResultMap" type="com.meteor.jsherp.domain.Msg">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="msgTitle" column="msg_title" jdbcType="VARCHAR"/>
+            <result property="msgContent" column="msg_content" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+            <result property="tenantId" column="tenant_id" jdbcType="BIGINT"/>
+            <result property="deleteFlag" column="delete_Flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,msg_title,msg_content,
+        create_time,type,user_id,
+        status,tenant_id,delete_Flag
+    </sql>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meteor.jsherp.mapper.DepotItemMapper">
+
+    <resultMap id="BaseResultMap" type="com.meteor.jsherp.domain.DepotItem">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="headerId" column="header_id" jdbcType="BIGINT"/>
+            <result property="materialId" column="material_id" jdbcType="BIGINT"/>
+            <result property="materialExtendId" column="material_extend_id" jdbcType="BIGINT"/>
+            <result property="materialUnit" column="material_unit" jdbcType="VARCHAR"/>
+            <result property="sku" column="sku" jdbcType="VARCHAR"/>
+            <result property="operNumber" column="oper_number" jdbcType="DECIMAL"/>
+            <result property="basicNumber" column="basic_number" jdbcType="DECIMAL"/>
+            <result property="unitPrice" column="unit_price" jdbcType="DECIMAL"/>
+            <result property="purchaseUnitPrice" column="purchase_unit_price" jdbcType="DECIMAL"/>
+            <result property="taxUnitPrice" column="tax_unit_price" jdbcType="DECIMAL"/>
+            <result property="allPrice" column="all_price" jdbcType="DECIMAL"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="depotId" column="depot_id" jdbcType="BIGINT"/>
+            <result property="anotherDepotId" column="another_depot_id" jdbcType="BIGINT"/>
+            <result property="taxRate" column="tax_rate" jdbcType="DECIMAL"/>
+            <result property="taxMoney" column="tax_money" jdbcType="DECIMAL"/>
+            <result property="taxLastMoney" column="tax_last_money" jdbcType="DECIMAL"/>
+            <result property="materialType" column="material_type" jdbcType="VARCHAR"/>
+            <result property="snList" column="sn_list" jdbcType="VARCHAR"/>
+            <result property="batchNumber" column="batch_number" jdbcType="VARCHAR"/>
+            <result property="expirationDate" column="expiration_date" jdbcType="TIMESTAMP"/>
+            <result property="linkId" column="link_id" jdbcType="BIGINT"/>
+            <result property="tenantId" column="tenant_id" jdbcType="BIGINT"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,header_id,material_id,
+        material_extend_id,material_unit,sku,
+        oper_number,basic_number,unit_price,
+        purchase_unit_price,tax_unit_price,all_price,
+        remark,depot_id,another_depot_id,
+        tax_rate,tax_money,tax_last_money,
+        material_type,sn_list,batch_number,
+        expiration_date,link_id,tenant_id,
+        delete_flag
+    </sql>
+</mapper>

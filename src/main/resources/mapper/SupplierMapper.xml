@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meteor.jsherp.mapper.SupplierMapper">
+
+    <resultMap id="BaseResultMap" type="com.meteor.jsherp.domain.Supplier">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="supplier" column="supplier" jdbcType="VARCHAR"/>
+            <result property="contacts" column="contacts" jdbcType="VARCHAR"/>
+            <result property="phoneNum" column="phone_num" jdbcType="VARCHAR"/>
+            <result property="email" column="email" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="isystem" column="isystem" jdbcType="TINYINT"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
+            <result property="enabled" column="enabled" jdbcType="BIT"/>
+            <result property="advanceIn" column="advance_in" jdbcType="DECIMAL"/>
+            <result property="beginNeedGet" column="begin_need_get" jdbcType="DECIMAL"/>
+            <result property="beginNeedPay" column="begin_need_pay" jdbcType="DECIMAL"/>
+            <result property="allNeedGet" column="all_need_get" jdbcType="DECIMAL"/>
+            <result property="allNeedPay" column="all_need_pay" jdbcType="DECIMAL"/>
+            <result property="fax" column="fax" jdbcType="VARCHAR"/>
+            <result property="telephone" column="telephone" jdbcType="VARCHAR"/>
+            <result property="address" column="address" jdbcType="VARCHAR"/>
+            <result property="taxNum" column="tax_num" jdbcType="VARCHAR"/>
+            <result property="bankName" column="bank_name" jdbcType="VARCHAR"/>
+            <result property="accountNumber" column="account_number" jdbcType="VARCHAR"/>
+            <result property="taxRate" column="tax_rate" jdbcType="DECIMAL"/>
+            <result property="sort" column="sort" jdbcType="VARCHAR"/>
+            <result property="tenantId" column="tenant_id" jdbcType="BIGINT"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,supplier,contacts,
+        phone_num,email,description,
+        isystem,type,enabled,
+        advance_in,begin_need_get,begin_need_pay,
+        all_need_get,all_need_pay,fax,
+        telephone,address,tax_num,
+        bank_name,account_number,tax_rate,
+        sort,tenant_id,delete_flag
+    </sql>
+</mapper>
