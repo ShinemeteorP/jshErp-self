@@ -5,7 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.meteor.jsherp.constant.BusinessConstant;
+import com.meteor.jsherp.constant.ErpAllConstant;
 import lombok.Data;
 
 /**
@@ -63,6 +67,21 @@ public class Msg implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    @TableField(exist = false)
+    private String createTimeStr;
+
+    public void setCreateTimeStr(){
+        if (createTime != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(BusinessConstant.DEFAULT_DATETIME_FORMAT);
+            String format = dateFormat.format(createTime);
+            this.createTimeStr = format;
+        }
+    }
+
+    public String getCreateTimeStr(){
+        return this.createTimeStr;
+    }
 
     @Override
     public boolean equals(Object that) {

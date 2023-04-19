@@ -1,7 +1,10 @@
 package com.meteor.jsherp.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.meteor.jsherp.domain.Depot;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * @author 刘鑫
@@ -10,4 +13,16 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface DepotService extends IService<Depot> {
 
+    /**
+     * 根据用户id获取对应的仓库数据
+     * @param id 用户id
+     * @return
+     */
+    JSONArray findDepotByUserId(Long id, String depotFlag);
+
+    /**
+     * 获取type为 0 的所有仓库列表
+     * @return
+     */
+    List<Depot> getAllDepotList();
 }

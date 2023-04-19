@@ -1,10 +1,21 @@
 package com.meteor.jsherp.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.meteor.jsherp.constant.BusinessConstant;
 import com.meteor.jsherp.domain.DepotItem;
+import com.meteor.jsherp.domain.User;
 import com.meteor.jsherp.mapper.DepotItemMapper;
-import com.meteor.jsherp.service.DepotItemService;
+import com.meteor.jsherp.service.*;
+import com.meteor.jsherp.utils.CommonUtil;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
 * @author 刘鑫
@@ -15,6 +26,66 @@ import org.springframework.stereotype.Service;
 public class DepotItemServiceImpl extends ServiceImpl<DepotItemMapper, DepotItem>
     implements DepotItemService {
 
+    @Resource
+    private DepotHeadService depotHeadService;
+
+    @Resource
+    private RoleService roleService;
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private OrgaUserRelService orgaUserRelService;
+
+    @Override
+    public Map<String, Object> getMonthsStatics(String token, String type, String approvalFlag) throws Exception{
+        User user = userService.getLoginUser(token);
+        HashMap<String, Object> map = new HashMap<>();
+        String priceLimit = roleService.getRoleByUserId(user.getId()).getPriceLimit();
+        long[] userIdList = orgaUserRelService.getUserIdListByRole(user.getId(), type);
+        List<String> lastMonths = CommonUtil.getLastMonths(6);
+        JSONArray buyPriceList = new JSONArray();
+        JSONArray salePriceList = new JSONArray();
+        JSONArray retailPriceList = new JSONArray();
+        for (String month:
+             lastMonths) {
+            String beginTime = CommonUtil.firstDayOfMonth(month) + BusinessConstant.DAY_FIRST_TIME;
+            String endTime = CommonUtil.lastDayOfMonth(month) + BusinessConstant.DAY_LAST_TIME;
+            BigDecimal buyInput = depotHeadService.getBuyInput(0, beginTime, endTime, userIdList, approvalFlag);
+            BigDecimal buyOutput = depotHeadService.getBuyOutput(0, beginTime, endTime, userIdList, approvalFlag);
+            JSONObject buyObject = new JSONObject();
+            BigDecimal buy = buyInput.subtract(buyOutput);
+            buyObject.put("x", month);
+            buyObject.put("y",
+                    BusinessConstant.SHIELD_BUY_PRICE.equals(priceLimit) ? BusinessConstant.PRICE_SHIELD_MARK : buy);
+            buyPriceList.add(buyObject);
+
+            BigDecimal saleInput = depotHeadService.getSaleInput(0, beginTime, endTime, userIdList, approvalFlag);
+            BigDecimal saleOutput = depotHeadService.getSaleOutput(0, beginTime, endTime, userIdList, approvalFlag);
+            BigDecimal sale = saleOutput.subtract(saleInput);
+            JSONObject saleObject = new JSONObject();
+            saleObject.put("x", month);
+            saleObject.put("y",
+                    BusinessConstant.SHIELD_SALE_PRICE.equals(priceLimit) ? BusinessConstant.PRICE_SHIELD_MARK : sale);
+            salePriceList.add(saleObject);
+
+
+            BigDecimal retailSaleInput = depotHeadService.getRetailSaleInput(0, beginTime, endTime, userIdList, approvalFlag);
+            BigDecimal retailSaleOutput = depotHeadService.getRetailSaleOutput(0, beginTime, endTime, userIdList, approvalFlag);
+            BigDecimal retail = retailSaleOutput.subtract(retailSaleInput);
+            JSONObject retailObject = new JSONObject();
+            retailObject.put("x", month);
+            retailObject.put("y",
+                    BusinessConstant.SHIELD_RETAIL_SALE_PRICE.equals(priceLimit) ? BusinessConstant.PRICE_SHIELD_MARK : retail);
+            retailPriceList.add(retailObject);
+        }
+        map.put("buyPriceList", buyPriceList);
+        map.put("salePriceList", salePriceList);
+        map.put("retailPriceList", retailPriceList);
+
+        return map;
+    }
 }
 
 

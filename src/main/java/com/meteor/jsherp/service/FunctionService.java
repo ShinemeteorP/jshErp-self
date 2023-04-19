@@ -22,7 +22,7 @@ public interface FunctionService extends IService<Function> {
      * @param approvalFlag 是否开启多级审核，true 开启 false 关闭
      * @return
      */
-    JSONArray getMenuArray(UserBusiness userBusiness, String pNumber,  Map<String,  List<Function>> functionTree, boolean approvalFlag);
+    JSONArray getMenuArray(UserBusiness userBusiness, String pNumber,  Map<String,  List<Function>> functionTree, String approvalFlag);
 
 
     /**

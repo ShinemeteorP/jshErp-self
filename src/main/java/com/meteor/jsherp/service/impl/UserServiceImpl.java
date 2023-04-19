@@ -9,10 +9,12 @@ import com.meteor.jsherp.mapper.TenantMapper;
 import com.meteor.jsherp.mapper.UserMapper;
 import com.meteor.jsherp.service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
 * @author 刘鑫
@@ -23,13 +25,17 @@ import java.util.List;
 public class UserServiceImpl extends CommonServiceImpl<UserMapper, User>
     implements UserService{
 
+
+    private ConcurrentHashMap<String, User> userMap = new ConcurrentHashMap<>();
+
     @Resource
     private UserMapper userMapper;
 
     @Resource
     private TenantMapper tenantMapper;
 
-    private User userLogin(String loginName, String password) {
+    @Override
+    public User userLogin(String loginName, String password) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(UserConstant.USER_LOGIN_NAME, loginName)
                 .eq(UserConstant.USER_PASSWORD, password)
@@ -75,6 +81,26 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, User>
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>().eq(UserConstant.USER_STATUS, UserConstant.USER_STATUS_ALLOW);
 
         return userMapper.selectCount(queryWrapper);
+    }
+
+    @Override
+    public void saveLoginUser(String token, User currentUser) {
+        userMap.put(token, currentUser);
+    }
+
+    @Override
+    public User getLoginUser(String token){
+        if (StringUtils.hasText(token)){
+            return userMap.get(token);
+        }
+        return null;
+    }
+
+    @Override
+    public void logOut(String token) {
+        if (StringUtils.hasText(token)){
+            userMap.remove(token);
+        }
     }
 }
 

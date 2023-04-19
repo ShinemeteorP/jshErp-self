@@ -12,6 +12,9 @@ public interface UserConstant {
     int USER_STATUS_ALLOW = 0;
     int USER_STATUS_DELETE = 1;
     int USER_STATUS_FORBID= 2;
+    String LOGIN_USER_NAME_IN_REDIS = "loginUser";
+    String USER_ROLE_TYPE_PERSONAL = "个人数据";
+    String USER_ROLE_TYPE_ORGANIZATION = "机构数据";
 
     /**
      * userbusiness 的type常量
@@ -24,7 +27,7 @@ public interface UserConstant {
     /**
      * 使用频繁的列名
      */
-    String CURRENT_USER_ID = "userId";
+    String CURRENT_USER_ID = "id";
     String USER_LOGIN_NAME = "login_name";
     String USER_PASSWORD = "password";
     String USER_STATUS = "Status";

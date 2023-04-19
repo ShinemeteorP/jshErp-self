@@ -23,4 +23,15 @@
         creator,update_time,updater,
         tenant_id
     </sql>
+
+<!--    long[] getUserIdListGroupByOrganization(long userId);-->
+    <select id="getUserIdListGroupByOrganization" resultType="long">
+        select user_id from jsh_orga_user_rel
+        where orga_id = (
+            select orga_id
+            from jsh_orga_user_rel
+            where user_id = #{userId}
+        )
+    </select>
+
 </mapper>

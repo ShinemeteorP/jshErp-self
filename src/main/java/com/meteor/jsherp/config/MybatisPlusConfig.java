@@ -1,7 +1,9 @@
 package com.meteor.jsherp.config;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import com.meteor.jsherp.constant.ErpAllConstant;
 import com.meteor.jsherp.utils.CommonUtil;
@@ -67,7 +69,7 @@ public class MybatisPlusConfig {
         }));
         // 如果用了分页插件注意先 add TenantLineInnerInterceptor 再 add PaginationInnerInterceptor
         // 用了分页插件必须设置 MybatisConfiguration#useDeprecatedExecutor = false
-        // interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
 }

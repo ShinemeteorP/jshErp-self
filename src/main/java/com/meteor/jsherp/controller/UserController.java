@@ -1,6 +1,9 @@
 package com.meteor.jsherp.controller;
 
+
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.ImmutableMap;
 import com.meteor.jsherp.constant.ErpAllConstant;
 import com.meteor.jsherp.constant.UserConstant;
@@ -58,22 +61,21 @@ public class UserController {
         String password = user.getPassword().trim();
         Map<String, Object> data = null;
         try {
-            Long userId = redisService.queryUserId(token);
+            User loginUser = userService.getLoginUser(token);
             data = new HashMap();
-            if (userId != null){
+            if (loginUser != null){
                 data.put("msgTip", UserConstant.USER_ALREADY_LOGIN);
             }else{
                 String msgTip = userService.login(loginName, password);
                 data.put("msgTip", msgTip);
                 if (UserConstant.USER_CONDITION_FIT.equals(msgTip)) {
                     token = CommonUtil.getToken();
-                    User currentUser = userService.getOneByKeyMap(
-                            ImmutableMap.of(UserConstant.USER_LOGIN_NAME,
-                                    loginName, UserConstant.USER_PASSWORD, password));
+                    User currentUser = userService.userLogin(loginName, password);
                     Tenant tenant = tenantService.getByUserId(currentUser.getTenantId());
                     if (tenant != null){
                         token = token + "_" + tenant.getTenantId();
                     }
+                    userService.saveLoginUser(token, currentUser);
                     JSONArray userMenuRole = userBusinessService.getUserMenuRole(currentUser.getId());
                     Role role = roleService.getRoleByUserId(currentUser.getId());
                     String type = role.getType();
@@ -102,8 +104,7 @@ public class UserController {
         BaseResponse response = new BaseResponse();
         try {
             String token = request.getHeader(ErpAllConstant.REQUEST_TOKEN_KEY);
-            Long userId = redisService.queryUserId(token);
-            User user = userService.getById(userId);
+            User user = userService.getLoginUser(token);
             long userCount = userService.countNormalUser();
             Tenant tenant = tenantService.getByUserId(user.getTenantId());
             HashMap<Object, Object> map = new HashMap<>();

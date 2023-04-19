@@ -37,4 +37,11 @@ public class SystemConfigController {
         return response;
     }
 
+    protected SystemConfig getCurrent(){
+        if (systemConfig == null){
+            getSystemConfig();
+        }
+        return systemConfig;
+    }
+
 }

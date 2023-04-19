@@ -51,4 +51,69 @@
         source,link_number,tenant_id,
         delete_flag
     </sql>
+
+<!--    getAnySaleStatistics(type, subType, hasSupplier, startTime, endTime, userIds, approval);-->
+    <select id="getAnySaleStatistics" resultType="java.math.BigDecimal">
+        select sum(discount_last_money) from jsh_depot_head
+            where 1=1 
+        <if test="type != '' and type != null">
+            and type = #{type}
+        </if>
+        <if test="subType != '' and subType != null">
+            and sub_type = #{subType}
+        </if>
+        <if test="hasSupplier == 1">
+            and organ_id is not null
+        </if>
+        <if test="startTime != '' and startTime != null">
+            and  oper_time >= #{startTime}
+        </if>
+        <if test="endTime != '' and endTime != null">
+            and oper_time &lt;=  #{endTime}
+        </if>
+        <if test="approval == '1'">
+            and  status = 1
+        </if>
+        <if test="userIds.length > 0">
+            and creator in
+            <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+                #{userId}
+            </foreach>
+        </if>
+
+    </select>
+
+    <!--    getAnySaleStatistics(type, subType, hasSupplier, startTime, endTime, userIds, approval);-->
+    <select id="getRetailSaleStatistics" resultType="java.math.BigDecimal">
+        select abs(sum(dh.total_price)) from jsh_depot_head dh
+        right join jsh_depot_item di on dh.id = di.header_id
+        where 1=1
+        <if test="type != '' and type != null">
+            and dh.type = #{type}
+        </if>
+        <if test="subType != '' and subType != null">
+            and dh.sub_type = #{subType}
+        </if>
+        <if test="hasSupplier == 1">
+            and dh.organ_id is not null
+        </if>
+        <if test="startTime != '' and startTime != null">
+            and  dh.oper_time >= #{startTime}
+        </if>
+        <if test="endTime != '' and endTime != null">
+            and dh.oper_time &lt;=  #{endTime}
+        </if>
+        <if test="approval == '1'">
+            and dh.status = 1
+        </if>
+        <if test="userIds.length > 0">
+            and dh.creator in
+            <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+                #{userId}
+            </foreach>
+        </if>
+
+    </select>
+
 </mapper>
+

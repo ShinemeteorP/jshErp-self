@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.meteor.jsherp.constant.UserConstant;
 import com.meteor.jsherp.domain.Function;
+import com.meteor.jsherp.domain.SystemConfig;
 import com.meteor.jsherp.domain.UserBusiness;
 import com.meteor.jsherp.service.FunctionService;
 import com.meteor.jsherp.service.SystemConfigService;
@@ -32,7 +33,7 @@ public class FunctionController {
     private UserBusinessService userBusinessService;
 
     @Resource
-    private SystemConfigService systemConfigService;
+    private SystemConfigController systemConfigController;
 
     private final Map<String, List<Function>> functionTreeMap;
 
@@ -48,10 +49,10 @@ public class FunctionController {
      * 构造器初始化 储存菜单编号及其对应的子菜单列表的map
      */
     public FunctionController(FunctionService functionService, UserBusinessService userBusinessService,
-                              SystemConfigService systemConfigService){
+                              SystemConfigController systemConfigController){
         this.functionService = functionService;
         this.userBusinessService = userBusinessService;
-        this.systemConfigService = systemConfigService;
+        this.systemConfigController = systemConfigController;
         ConcurrentHashMap<String, List<Function>> functionTreeMap = new ConcurrentHashMap<>();
         for (String number:
                 functionNumberList) {
@@ -69,6 +70,7 @@ public class FunctionController {
      */
     @PostMapping("/findMenuByPNumber")
     public JSONArray getMenuByPNumber(@RequestBody JSONObject object){
+
         JSONArray menuArray = null;
         try {
             String pNumber = object.getString("pNumber");
@@ -77,7 +79,9 @@ public class FunctionController {
 
             UserBusiness userFunction = userBusinessService.getOneByKeyId(
                     CommonUtil.getNumber(userRole.getValue()), UserConstant.USER_BUSINESS_ROLE_FUNCTION);
-            menuArray = functionService.getMenuArray(userFunction, pNumber, functionTreeMap, true);
+            SystemConfig systemConfig = systemConfigController.getCurrent();
+
+            menuArray = functionService.getMenuArray(userFunction, pNumber, functionTreeMap, systemConfig.getMultiLevelApprovalFlag());
             JSONObject homeItem = new JSONObject();
             homeItem.put("id", 0);
             homeItem.put("text", "首页");

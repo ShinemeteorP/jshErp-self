@@ -1,7 +1,10 @@
 package com.meteor.jsherp.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.meteor.jsherp.domain.Supplier;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * @author 刘鑫
@@ -10,4 +13,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SupplierService extends IService<Supplier> {
 
+    /**
+     * 根据类型从supplier表中获取对应的列表
+     * @param type 类型
+     * @return
+     */
+    List<Supplier> findBySelect(String type);
 }

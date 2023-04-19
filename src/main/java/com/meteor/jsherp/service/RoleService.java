@@ -10,6 +10,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface RoleService extends IService<Role> {
 
+    /**
+     * 根据用户id获取对应的role对象
+     * @param userId 用户id
+     * @return
+     */
     Role getRoleByUserId(long userId);
+
 
 }

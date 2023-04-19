@@ -8,6 +8,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @description 针对表【jsh_msg(消息表)】的数据库操作Service
 * @createDate 2023-04-13 18:07:55
 */
-public interface MsgService extends IService<Msg>, CommonService<Msg> {
+public interface MsgService extends CommonService<Msg>, IService<Msg> {
 
 }

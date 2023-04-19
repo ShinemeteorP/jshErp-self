@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.meteor.jsherp.service.CommonService;
+import com.meteor.jsherp.service.common.ServiceContainer;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,8 +15,7 @@ import java.util.Set;
  * @author 刘鑫
  * @version 1.0
  */
-public class CommonServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> implements CommonService<T> {
-
+public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> implements CommonService<T> {
 
 
     @Override
@@ -53,5 +54,10 @@ public class CommonServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M
             queryWrapper.eq(e.getKey(), e.getValue());
         }
         return super.baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public List<T> select(Map<String, String> paramMap) {
+        return null;
     }
 }

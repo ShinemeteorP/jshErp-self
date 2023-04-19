@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.meteor.jsherp.constant.BusinessConstant;
 import com.meteor.jsherp.domain.Function;
 import com.meteor.jsherp.domain.UserBusiness;
 import com.meteor.jsherp.mapper.FunctionMapper;
@@ -27,7 +28,7 @@ public class FunctionServiceImpl extends ServiceImpl<FunctionMapper, Function>
     private FunctionMapper functionMapper;
 
     @Override
-    public JSONArray getMenuArray(UserBusiness userBusiness, String pNumber, Map<String, List<Function>> functionMap, boolean approvalFlag) {
+    public JSONArray getMenuArray(UserBusiness userBusiness, String pNumber, Map<String, List<Function>> functionMap, String approvalFlag) {
         if (!functionMap.containsKey(pNumber)){
             return null;
         }
@@ -35,6 +36,10 @@ public class FunctionServiceImpl extends ServiceImpl<FunctionMapper, Function>
         List<Function> functionList = functionMap.get(pNumber);
         for (Function function:
              functionList) {
+            //如果关闭多级审核，遇到任务审核菜单直接跳过
+            if (BusinessConstant.SYSTEM_CONFIG_APPROVAL_CLOSE.equals(approvalFlag) && "/workflow".equals(function.getUrl())) {
+                continue;
+            }
             JSONObject object = new JSONObject();
             object.put("id", function.getId());
             object.put("text", function.getName());

@@ -38,4 +38,6 @@ public interface CommonService<T> {
      * @return
      */
     T getOneByKeyMap(Map<String, Object> map);
+
+    List<T> select(Map<String, String> paramMap);
 }

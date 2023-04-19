@@ -1,9 +1,10 @@
 package com.meteor.jsherp.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.meteor.jsherp.constant.UserConstant;
+import com.meteor.jsherp.domain.User;
 import com.meteor.jsherp.service.RedisService;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -21,25 +22,16 @@ public class RedisServiceImpl implements RedisService {
     private RedisTemplate redisTemplate;
 
     public Object queryMsgByKey(String token, String key){
+        if(!StringUtils.hasText(token)){
+            return null;
+        }
 
         return redisTemplate.opsForHash().get(token, key);
     }
 
-    @Override
-    public Long queryUserId(String token) {
-        if(!StringUtils.hasText(token)){
-            return null;
-        }
-        Long id = (Long) queryMsgByKey(token, UserConstant.CURRENT_USER_ID);
-        if (id != null) {
-            redisTemplate.expire(id, 86400, TimeUnit.SECONDS);
-        }
-        return id;
-
-    }
 
     @Override
-    public void insertTokenMap(String token, String key, String value) {
+    public void insertTokenMap(String token, String key, Object value) {
         redisTemplate.opsForHash().put(token, key, value);
     }
 
@@ -47,4 +39,5 @@ public class RedisServiceImpl implements RedisService {
     public Long delTokenByKey(String token, String key) {
         return redisTemplate.opsForHash().delete(token, key);
     }
+
 }

@@ -5,6 +5,7 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Documented;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.URLDecoder;
@@ -13,6 +14,7 @@ import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
+import java.lang.annotation.Annotation;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -770,5 +772,22 @@ public class CommonUtil {
         for (int i = 0; i < 100; i++) {
             System.out.print(getRandomChar() + "  ||    ");
         }
+    }
+
+    public static <T extends Annotation> T getAnnotation(Class aClass, Class<T> annotation){
+        T res = (T) aClass.getAnnotation(annotation);
+        if (res != null){
+            return res;
+        }
+        java.lang.annotation.Annotation[] annotations = aClass.getAnnotations();
+        for (java.lang.annotation.Annotation a:
+             annotations) {
+            if ( a instanceof Documented){
+                continue;
+            }
+            res = getAnnotation(a.getClass(), annotation);
+        }
+        return res;
+
     }
 }

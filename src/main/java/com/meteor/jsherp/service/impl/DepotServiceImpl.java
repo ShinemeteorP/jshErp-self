@@ -1,10 +1,21 @@
 package com.meteor.jsherp.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.ImmutableMap;
+import com.meteor.jsherp.constant.BusinessConstant;
+import com.meteor.jsherp.constant.UserConstant;
 import com.meteor.jsherp.domain.Depot;
+import com.meteor.jsherp.domain.UserBusiness;
 import com.meteor.jsherp.mapper.DepotMapper;
 import com.meteor.jsherp.service.DepotService;
+import com.meteor.jsherp.service.UserBusinessService;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
 * @author 刘鑫
@@ -15,6 +26,52 @@ import org.springframework.stereotype.Service;
 public class DepotServiceImpl extends ServiceImpl<DepotMapper, Depot>
     implements DepotService {
 
+    @Resource
+    private DepotMapper depotMapper;
+
+    @Resource
+    private UserBusinessService userBusinessService;
+
+    @Override
+    public JSONArray findDepotByUserId(Long id, String depotFlag) {
+        JSONArray array = new JSONArray();
+        List<Depot> depotList = getAllDepotList();
+        if (depotList != null){
+            if (BusinessConstant.SYSTEM_CONFIG_APPROVAL_OPEN.equals(depotFlag)){
+                UserBusiness userBusiness = userBusinessService.getOneByKeyMap(
+                        ImmutableMap.of("key_id", id, "type", UserConstant.USER_BUSINESS_USER_DEPOT));
+                String value = userBusiness.getValue();
+                for (Depot d:
+                     depotList) {
+                    if (value.contains("[" + d.getId() + "]")){
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("id", d.getId());
+                        jsonObject.put("depotName", d.getName());
+                        jsonObject.put("isDefault", d.getIsDefault());
+                        array.add(jsonObject);
+                    }
+                }
+            }else {
+                for (Depot d:
+                     depotList) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("id", d.getId());
+                    jsonObject.put("depotName", d.getName());
+                    jsonObject.put("isDefault", d.getIsDefault());
+                    array.add(jsonObject);
+                }
+            }
+        }
+        return array;
+    }
+
+    @Override
+    public List<Depot> getAllDepotList() {
+        QueryWrapper<Depot> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", 0).eq("enabled", true).orderByAsc("sort").orderByDesc("id");
+        List<Depot> depots = depotMapper.selectList(queryWrapper);
+        return depots;
+    }
 }
 
 

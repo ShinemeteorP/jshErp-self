@@ -4,7 +4,9 @@ package com.meteor.jsherp.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.meteor.jsherp.constant.UserConstant;
 import com.meteor.jsherp.domain.Function;
+import com.meteor.jsherp.domain.User;
 import com.meteor.jsherp.domain.UserBusiness;
 import com.meteor.jsherp.mapper.FunctionMapper;
 import com.meteor.jsherp.mapper.UserBusinessMapper;
@@ -14,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +38,7 @@ public class UserBusinessServiceImpl extends CommonServiceImpl<UserBusinessMappe
     @Override
     public JSONArray getUserMenuRole(long userId) {
         JSONArray array = new JSONArray();
-        QueryWrapper<UserBusiness> queryWrapper = new QueryWrapper<UserBusiness>().eq("key_id", userId);
+        QueryWrapper<UserBusiness> queryWrapper = new QueryWrapper<UserBusiness>().eq("key_id", userId).eq("type", UserConstant.USER_BUSINESS_USER_ROLE);
         UserBusiness userBusiness = userBusinessMapper.selectOne(queryWrapper);
         String btnStr = userBusiness.getBtnStr();
         if (StringUtils.hasText(btnStr)){

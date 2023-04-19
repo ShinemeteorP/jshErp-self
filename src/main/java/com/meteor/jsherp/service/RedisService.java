@@ -1,5 +1,8 @@
 package com.meteor.jsherp.service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.meteor.jsherp.domain.User;
+
 /**
  * @author 刘鑫
  * @version 1.0
@@ -13,12 +16,6 @@ public interface RedisService {
      */
     Object queryMsgByKey(String token, String key);
 
-    /**
-     * 获取已登录用户的id
-     * @param token 请求头的token
-     * @return id
-     */
-    Long queryUserId(String token);
 
     /**
      * 在redis存储{token,{k,v}}数据
@@ -26,11 +23,13 @@ public interface RedisService {
      * @param key
      * @param value
      */
-    void insertTokenMap(String token, String key, String value);
+    void insertTokenMap(String token, String key, Object value);
 
     /**
      * 删除key对应的数据
      * @param token
      */
     Long delTokenByKey(String token, String key);
+
+
 }
