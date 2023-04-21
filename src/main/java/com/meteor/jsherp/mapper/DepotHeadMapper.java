@@ -2,9 +2,12 @@ package com.meteor.jsherp.mapper;
 
 import com.meteor.jsherp.domain.DepotHead;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.meteor.jsherp.domain.DepotHeadBo;
+import com.meteor.jsherp.domain.Organization;
 
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
 * @author 刘鑫
@@ -39,6 +42,32 @@ public interface DepotHeadMapper extends BaseMapper<DepotHead> {
      * @return
      */
     BigDecimal getRetailSaleStatistics(String type, String subType, int hasSupplier, String startTime, String endTime, long[] userIds, String approval);
+
+    /**
+     * 子菜单表格根据条件查询
+     * @param type
+     * @param subType
+     * @param userIdList
+     * @param hasDebt
+     * @param statusArray
+     * @param purchaseStatusArray
+     * @param number
+     * @param linkNumber
+     * @param beginTime
+     * @param endTime
+     * @param materialParam
+     * @param organId
+     * @param organArray
+     * @param creator
+     * @param depotId
+     * @param depotArray
+     * @param accountId
+     * @param remark
+     * @param start
+     * @param pageSize
+     * @return
+     */
+    List<DepotHeadBo> getDepotHeadBoList(String type, String subType, long[] userIdList, String hasDebt, String[] statusArray, String[] purchaseStatusArray, String number, String linkNumber, String beginTime, String endTime, String materialParam, Long organId, List<Organization> organArray, Long creator, Long depotId, List<Long> depotArray, Long accountId, String remark, int start, Integer pageSize);
 }
 
 

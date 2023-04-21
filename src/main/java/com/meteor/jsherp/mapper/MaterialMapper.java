@@ -2,6 +2,11 @@ package com.meteor.jsherp.mapper;
 
 import com.meteor.jsherp.domain.Material;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.MapKey;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
 * @author 刘鑫
@@ -11,6 +16,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface MaterialMapper extends BaseMapper<Material> {
 
+    @MapKey("id")
+    List<Map<String , Object>> getMaterialListMap(List<Long> idList);
 }
 
 

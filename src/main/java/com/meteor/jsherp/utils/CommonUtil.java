@@ -530,6 +530,10 @@ public class CommonUtil {
         return new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
     }
 
+    public static Long JSONOBJStringToLong(String str) throws NumberFormatException{
+        return StringUtils.hasText(str) ? Long.parseLong(str) : null;
+    }
+
     /**
      * 获取email用户姓名
      *

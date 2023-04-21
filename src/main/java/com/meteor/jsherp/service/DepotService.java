@@ -25,4 +25,12 @@ public interface DepotService extends IService<Depot> {
      * @return
      */
     List<Depot> getAllDepotList();
+
+    /**
+     * 根据用户id获取对应的仓库id列表
+     * @param id 用户id
+     * @param depotFlag 仓库开启标识
+     * @return
+     */
+    List<Long> getDepotIds(Long id, String depotFlag);
 }

@@ -2,7 +2,7 @@ package com.meteor.jsherp.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.meteor.jsherp.constant.BusinessConstant;
 import com.meteor.jsherp.domain.DepotItem;
 import com.meteor.jsherp.domain.User;
@@ -23,7 +23,7 @@ import java.util.Map;
 * @createDate 2023-04-13 18:07:54
 */
 @Service
-public class DepotItemServiceImpl extends ServiceImpl<DepotItemMapper, DepotItem>
+public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, DepotItem>
     implements DepotItemService {
 
     @Resource
@@ -37,6 +37,9 @@ public class DepotItemServiceImpl extends ServiceImpl<DepotItemMapper, DepotItem
 
     @Resource
     private OrgaUserRelService orgaUserRelService;
+
+    @Resource
+    private DepotItemMapper depotItemMapper;
 
     @Override
     public Map<String, Object> getMonthsStatics(String token, String type, String approvalFlag) throws Exception{
@@ -86,6 +89,26 @@ public class DepotItemServiceImpl extends ServiceImpl<DepotItemMapper, DepotItem
 
         return map;
     }
+
+    @Override
+    public Map<Long, BigDecimal> getMaterialCountListMap(List<Long> idList) {
+        QueryWrapper<DepotItem> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("header_id", idList);
+        List<DepotItem> depotItems = depotItemMapper.selectList(queryWrapper);
+        BigDecimal sum = BigDecimal.valueOf(0);
+        for (DepotItem d:
+             depotItems) {
+            sum = sum.add(d.getOperNumber() != null ? d.getOperNumber() : BigDecimal.valueOf(0));
+        }
+        HashMap<Long, BigDecimal> hashMap = new HashMap<>();
+        for (DepotItem d:
+            depotItems ) {
+            hashMap.put(d.getHeaderId(), sum);
+        }
+        return hashMap;
+    }
+
+
 }
 
 

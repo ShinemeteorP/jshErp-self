@@ -22,4 +22,7 @@ public interface ErpAllConstant {
     String REQUEST_FORWARD_REDIRECT_MSG = "转发请求session失效";
     String REQUEST_FORWARD_FAILED_MSG = "转发请求失败!";
     String REQUEST_TEST_USER_MSG = "演示用户禁止操作";
+
+    String REQUEST_PARAM_CURRENT_PAGE = "currentPage";
+    String REQUEST_PARAM_PAGE_SIZE = "pageSize";
 }

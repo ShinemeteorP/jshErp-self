@@ -28,11 +28,11 @@ public class OrgaUserRelServiceImpl extends CommonServiceImpl<OrgaUserRelMapper,
             case UserConstant.USER_ROLE_TYPE_PERSONAL:
                 return new long[]{userId};
             case UserConstant.USER_ROLE_TYPE_ORGANIZATION:
+                return orgaUserRelMapper.getUserIdListGroupByOrganization(userId);
 
-                break;
         }
 
-        return new long[0];
+        return null;
     }
 }
 

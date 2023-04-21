@@ -39,5 +39,5 @@ public interface CommonService<T> {
      */
     T getOneByKeyMap(Map<String, Object> map);
 
-    List<T> select(Map<String, String> paramMap);
+    List<? extends T> select(Map<String, String> paramMap);
 }

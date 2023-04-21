@@ -1,10 +1,16 @@
 package com.meteor.jsherp.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.meteor.jsherp.domain.AccountItem;
 import com.meteor.jsherp.mapper.AccountItemMapper;
-import com.meteor.jsherp.service.AccountItemService;
 import org.springframework.stereotype.Service;
+import com.meteor.jsherp.service.AccountItemService;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
 * @author 刘鑫
@@ -12,9 +18,24 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-04-13 18:07:54
 */
 @Service
-public class AccountItemServiceImpl extends ServiceImpl<AccountItemMapper, AccountItem>
+public class AccountItemServiceImpl extends CommonServiceImpl<AccountItemMapper, AccountItem>
     implements AccountItemService {
 
+    @Resource
+    private AccountItemMapper accountItemMapper;
+
+    @Override
+    public Map<Long, Long> getBillCountMap(ArrayList<Long> idList) {
+        QueryWrapper<AccountItem> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("bill_id", idList);
+        List<AccountItem> accountItemList = accountItemMapper.selectList(queryWrapper);
+        Map<Long, Long> map = new HashMap<>();
+        for (AccountItem a:
+             accountItemList) {
+            map.put(a.getBillId(), Long.valueOf(accountItemList.size()));
+        }
+        return map;
+    }
 }
 
 

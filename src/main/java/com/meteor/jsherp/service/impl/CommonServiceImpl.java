@@ -57,7 +57,7 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
     }
 
     @Override
-    public List<T> select(Map<String, String> paramMap) {
+    public List<? extends T> select(Map<String, String> paramMap) {
         return null;
     }
 }

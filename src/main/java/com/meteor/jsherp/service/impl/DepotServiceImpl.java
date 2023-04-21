@@ -15,6 +15,7 @@ import com.meteor.jsherp.service.UserBusinessService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -71,6 +72,29 @@ public class DepotServiceImpl extends ServiceImpl<DepotMapper, Depot>
         queryWrapper.eq("type", 0).eq("enabled", true).orderByAsc("sort").orderByDesc("id");
         List<Depot> depots = depotMapper.selectList(queryWrapper);
         return depots;
+    }
+
+    @Override
+    public List<Long> getDepotIds(Long id, String depotFlag) {
+        List<Long> idArray = depotMapper.getDepotIds();
+        List<Long> res = new LinkedList<Long>();
+        if (BusinessConstant.SYSTEM_CONFIG_APPROVAL_OPEN.equals(depotFlag)){
+            UserBusiness userBusiness = userBusinessService.getOneByKeyMap(
+                    ImmutableMap.of("key_id", id, "type", UserConstant.USER_BUSINESS_USER_DEPOT));
+            String value = userBusiness.getValue();
+            if (value == null){
+                return null;
+            }
+            for (Long i:
+                 idArray) {
+                if ( value.contains("[" + i + "]")){
+                    res.add(i);
+                }
+            }
+        }else {
+            res = idArray;
+        }
+        return res;
     }
 }
 

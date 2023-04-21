@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -99,6 +100,11 @@ public class UserController {
         return response;
     }
 
+    /**
+     * 获取当前用户的租户信息
+     * @param request
+     * @return
+     */
     @GetMapping("/infoWithTenant")
     public BaseResponse getTenant(HttpServletRequest request){
         BaseResponse response = new BaseResponse();
@@ -119,5 +125,23 @@ public class UserController {
             ResponseUtil.defaultServiceExceptionResponse(response);
         }
         return response;
+    }
+
+    @GetMapping("/getUserList")
+    public JSONArray getUserList(){
+        JSONArray array = new JSONArray();
+        try {
+            List<User> list = userService.getListByKey(UserConstant.USER_STATUS, UserConstant.USER_STATUS_ALLOW);
+            for (User u:
+                 list) {
+                JSONObject userObj = new JSONObject();
+                userObj.put("id", u.getId());
+                userObj.put("userName", u.getUsername());
+                array.add(userObj);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return array;
     }
 }

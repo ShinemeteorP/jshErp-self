@@ -37,4 +37,21 @@
         other_field2,other_field3,enable_serial_number,
         enable_batch_number,tenant_id,delete_flag
     </sql>
+
+
+
+<!--    Map<Long, String> getMaterialListMap(ArrayList<Long> idList);-->
+    <select id="getMaterialListMap" resultType="map">
+        select di.header_id id, group_concat(concat(m.name,' ',m.standard,' ',m.model)) materialList
+        from jsh_depot_item di
+        left join jsh_material m on di.material_id = m.id
+        where 1=1
+        <if test="idList!=null">
+            and  di.header_id in
+            <foreach collection="idList" item="id" separator="," close=")" open="(">
+                #{id}
+            </foreach>
+        </if>
+        group by di.header_id
+    </select>
 </mapper>

@@ -74,7 +74,7 @@
         <if test="approval == '1'">
             and  status = 1
         </if>
-        <if test="userIds.length > 0">
+        <if test="userIds!= null">
             and creator in
             <foreach collection="userIds" item="userId" separator="," open="(" close=")">
                 #{userId}
@@ -106,13 +106,107 @@
         <if test="approval == '1'">
             and dh.status = 1
         </if>
-        <if test="userIds.length > 0">
+        <if test="userIds != null">
             and dh.creator in
             <foreach collection="userIds" item="userId" separator="," open="(" close=")">
                 #{userId}
             </foreach>
         </if>
 
+    </select>
+
+<!--    List<DepotHeadBo> getDepotHeadBoList(String type, String subType, long[] userIdList, String hasDebt, String[] statusArray, String[] purchaseStatusArray, String number, String linkNumber, String beginTime, String endTime, String materialParam, Long organId, List<Organization> organArray, Long creator, Long depotId, List<Long> depotArray, Long accountId, String remark, int start, Integer pageSize);-->
+    <select id="getDepotHeadBoList" resultType="com.meteor.jsherp.domain.DepotHeadBo">
+        select distinct dh.*, s.supplier organName, u.username userName, a.name accountName
+            from jsh_depot_head dh
+            left join jsh_depot_item di on dh.id = di.header_id
+            left join jsh_supplier s on dh.organ_id = s.id
+            left join jsh_user u on dh.creator = u.id
+            left join jsh_account a on dh.account_id = a.id
+            left join jsh_material m on di.material_id = m.id
+            left join jsh_material_extend me on di.material_extend_id = me.id
+        where 1=1
+        <if test=" type!=null">
+            and dh.type = #{type}
+        </if>
+        <if test="subType!=null">
+            and dh.sub_type = #{subType}
+        </if>
+        <if test="userIdList!=null">
+            and dh.creator in
+            <foreach collection="userIdList" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+        </if>
+        <if test="creator!=null">
+            and dh.creator=#{creator}
+        </if>
+        <if test="hasDebt=='0'">
+            and dh.last_money+dh.other_money-dh.deposit-abs(dh.change_amount)=0
+        </if>
+        <if test="hasDebt=='1'">
+            and dh.last_money+dh.other_money-dh.deposit-abs(dh.change_amount)>0
+        </if>
+        <if test="statusArray!=null">
+            and dh.status in
+            <foreach collection="statusArray" item="status" separator="," close=")" open="(">
+                #{status}
+            </foreach>
+        </if>
+        <if test="purchaseStatusArray!=null">
+            and dh.purchase_status in
+            <foreach collection="purchaseStatusArray" item="purchase" separator="," close=")" open="(">
+                #{purchase}
+            </foreach>
+        </if>
+        <if test="number!=null and number != ''">
+            and dh.number like '%${number}%'
+        </if>
+        <if test="linkNumber!=null and linkNumber != ''">
+            and dh.link_number like '%${linkNumber}%'
+        </if>
+        <if test="beginTime!=null">
+            and dh.oper_time>=#{beginTime}
+        </if>
+        <if test="endTime!=null">
+            and dh.oper_time &lt; #{endTime}
+        </if>
+        <if test="materialParam!=null and materialParam != ''">
+            <bind name="param" value="%${materialParam}%"/>
+            and (me.bar_code like #{param} or m.naem like #{param} or m.standard like #{param} or m.color like #{param} or
+                  m.mfrs like #{param} or m.otherField1 like #{param} or m.otherField2 like #{param} or m.otherField3 like #{param})
+        </if>
+        <if test="organId!=null">
+            and dh.organ_id = #{organId}
+        </if>
+
+        <if test="organArray!=null">
+            and dh.organ_id in
+            <foreach collection="organArray" open="(" close=")" separator="," item="organ">
+                #{organ}
+            </foreach>
+        </if>
+
+        <if test="depotId!=null">
+            and di.depot_id = #{depotId}
+        </if>
+
+        <if test="depotArray!=null">
+            and di.depot_id in
+            <foreach collection="depotArray" open="(" close=")" separator="," item="depot">
+                #{depot}
+            </foreach>
+        </if>
+
+        <if test="accountId!=null">
+            and dh.account_id = #{accountId} and dh.account_id_list like '%${accountId}%'
+        </if>
+        <if test="remark!=null and remark !=''">
+            and dh.remark like '%${remark}%' and di.remark like '%${remark}%'
+        </if>
+        <if test="start!=null and pageSize!=null">
+            limit #{start} , #{pageSize}
+        </if>
     </select>
 
 </mapper>

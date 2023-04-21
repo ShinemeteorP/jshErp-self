@@ -27,4 +27,8 @@
         enabled,tenant_id,delete_Flag,
         is_default
     </sql>
+<!--    long[] getDepotIds();-->
+    <select id="getDepotIds" resultType="long">
+        select id from jsh_depot;
+    </select>
 </mapper>

@@ -4,6 +4,7 @@ import com.meteor.jsherp.domain.DepotHead;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Map;
 * @description 针对表【jsh_depot_head(单据主表)】的数据库操作Service
 * @createDate 2023-04-13 18:07:54
 */
-public interface DepotHeadService extends IService<DepotHead> {
+public interface DepotHeadService extends IService<DepotHead>, CommonService<DepotHead> {
 
     /**
      * 根据用户权限、组织配置等 获取对应口径的今天、昨天、这个月、今年的采购、销售、零售金额
@@ -87,4 +88,11 @@ public interface DepotHeadService extends IService<DepotHead> {
      * @return 零售金额
      */
     BigDecimal getRetailSaleOutput(int hasSupplier, String startTime, String endTime, long[] userIds, String approval);
+
+    /**
+     * 获取各个number对应的size值
+     * @param numberList
+     * @return
+     */
+    Map<String, Long> getBillSizeMap(List<String> numberList);
 }
