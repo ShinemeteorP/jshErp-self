@@ -38,26 +38,27 @@ public class UserBusinessServiceImpl extends CommonServiceImpl<UserBusinessMappe
     @Override
     public JSONArray getUserMenuRole(long userId) {
         JSONArray array = new JSONArray();
+        JSONArray btnArray = new JSONArray();
         QueryWrapper<UserBusiness> queryWrapper = new QueryWrapper<UserBusiness>().eq("key_id", userId).eq("type", UserConstant.USER_BUSINESS_USER_ROLE);
         UserBusiness userBusiness = userBusinessMapper.selectOne(queryWrapper);
-        String btnStr = userBusiness.getBtnStr();
-        if (StringUtils.hasText(btnStr)){
-            //遍历btnStr，使用正则表达式，将中括号中的数字取出，存入到longs集合中
-            String regex = "(\\[[^\\]]*\\])";
-            Pattern compile = Pattern.compile(regex);
-            Matcher matcher = compile.matcher(btnStr);
-            ArrayList<String> funIds = new ArrayList<>();
-            while (matcher.find()){
-                funIds.add(matcher.group().substring(1, matcher.group().length()-1));
+        String value = userBusiness.getValue();
+        if(StringUtils.hasText(value) && value.indexOf("[") != -1 && value.indexOf("]") != -1){
+            value = value.replace("[","").replace("]","");
+            queryWrapper = new QueryWrapper<UserBusiness>().eq("key_id", value).eq("type", UserConstant.USER_BUSINESS_ROLE_FUNCTION);
+            UserBusiness functionUserBusiness = userBusinessMapper.selectOne(queryWrapper);
+            if(StringUtils.hasText(functionUserBusiness.getBtnStr())){
+                btnArray = JSONArray.parseArray(functionUserBusiness.getBtnStr());
             }
-
-            for (int i = 0; i < funIds.size(); i++) {
-                Function function = functionMapper.selectById(Long.parseLong(funIds.get(i)));
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put( funIds.get(i), function.getUrl());
-                array.add(jsonObject);
-            }
-
+        }
+        for (Object btn:
+             btnArray) {
+            JSONObject jsonObject = JSONObject.parseObject(btn.toString());
+            String funId = jsonObject.getString("funId");
+            Function function = functionMapper.selectById(Long.parseLong(funId));
+            JSONObject btnObject = new JSONObject();
+            btnObject.put("url", function != null? function.getUrl() : null);
+            btnObject.put("btnStr", jsonObject.getString("btnStr"));
+            array.add(btnObject);
         }
         return array;
     }
@@ -66,6 +67,25 @@ public class UserBusinessServiceImpl extends CommonServiceImpl<UserBusinessMappe
     public UserBusiness getOneByKeyId(long userId, String type) {
         QueryWrapper<UserBusiness> eq = new QueryWrapper<UserBusiness>().eq("key_id", userId).eq("type", type);
         return userBusinessMapper.selectOne(eq);
+    }
+
+    @Override
+    public int insertUserBusiness(JSONObject object) {
+
+        String value = object.getString("value");
+        String type = object.getString("type");
+        String keyId = object.getString("keyId");
+        Long tenantId = object.getLong("tenantId");
+        UserBusiness business = new UserBusiness();
+        business.setType(type);
+        business.setKeyId(keyId);
+        business.setTenantId(tenantId);
+        String newValue = value.replaceAll(",", "\\]\\[");
+        newValue = newValue.replaceAll("\\[0\\]","").replaceAll("\\[\\]","");
+        business.setValue(newValue);
+        int insert = userBusinessMapper.insert(business);
+        //日志插入
+        return insert;
     }
 }
 

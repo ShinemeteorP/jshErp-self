@@ -1,6 +1,7 @@
 package com.meteor.jsherp.service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.meteor.jsherp.domain.UserBusiness;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -24,4 +25,10 @@ public interface UserBusinessService extends IService<UserBusiness>, CommonServi
      * @return
      */
     UserBusiness getOneByKeyId(long userId, String type);
+
+    /**
+     * 注册时，新增一个用户对应的userRole数据
+     * @param object
+     */
+    int insertUserBusiness(JSONObject object);
 }

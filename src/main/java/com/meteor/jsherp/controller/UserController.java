@@ -1,19 +1,20 @@
 package com.meteor.jsherp.controller;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.ImmutableMap;
 import com.meteor.jsherp.constant.ErpAllConstant;
 import com.meteor.jsherp.constant.UserConstant;
 import com.meteor.jsherp.domain.Role;
 import com.meteor.jsherp.domain.Tenant;
 import com.meteor.jsherp.domain.User;
+import com.meteor.jsherp.domain.extand.UserEx;
 import com.meteor.jsherp.response.BaseResponse;
 import com.meteor.jsherp.service.*;
 import com.meteor.jsherp.utils.CommonUtil;
+import com.meteor.jsherp.utils.RandImageUtil;
 import com.meteor.jsherp.utils.ResponseUtil;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,6 +30,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+
 
     @Resource
     private RedisService redisService;
@@ -127,6 +130,10 @@ public class UserController {
         return response;
     }
 
+    /**
+     * 获取所有合法用户的id和用户名
+     * @return
+     */
     @GetMapping("/getUserList")
     public JSONArray getUserList(){
         JSONArray array = new JSONArray();
@@ -143,5 +150,68 @@ public class UserController {
             exception.printStackTrace();
         }
         return array;
+    }
+
+    /**
+     * 用户退出登入
+     * @param token
+     * @return
+     */
+    @GetMapping("/logout")
+    public BaseResponse logout(@RequestHeader(value = ErpAllConstant.REQUEST_TOKEN_KEY, required = false) String token){
+        BaseResponse response = new BaseResponse();
+        try {
+            if (StringUtils.hasText(token)) {
+                userService.logOut(token);
+            }
+            ResponseUtil.resSuccess(response);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            ResponseUtil.customServiceExceptionResponse("退出失败", response);
+        }
+        return response;
+    }
+
+    /**
+     * 获取随机4位数的验证码
+     * @param key
+     * @return
+     */
+    @GetMapping("/random/{key}")
+    public BaseResponse getRandomCode(@PathVariable("key") String key) {
+        BaseResponse response = new BaseResponse();
+        HashMap<Object, Object> map = new HashMap<>();
+        try {
+            String randomCode = CommonUtil.getCharAndNum(4);
+            String base64 = RandImageUtil.generate(randomCode);
+            map.put("codeNum", randomCode);
+            map.put("base64", base64);
+            ResponseUtil.resSuccess(response, map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ResponseUtil.customServiceExceptionResponse("获取失败", response);
+        }
+        return response;
+    }
+
+
+    /**
+     * 注册用户
+     * @param user
+     * @return
+     */
+    @PostMapping(value = "/registerUser")
+    public BaseResponse registerUser(@RequestBody UserEx user){
+        BaseResponse response = new BaseResponse();
+        try {
+            user.setUsername(user.getLoginName());
+            userService.checkLoginName(user.getId(), user.getLoginName());
+            userService.register(user);
+            ResponseUtil.resSuccess(response, "操作成功");
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            ResponseUtil.defaultServiceExceptionResponse(response);
+        }
+        return response;
     }
 }

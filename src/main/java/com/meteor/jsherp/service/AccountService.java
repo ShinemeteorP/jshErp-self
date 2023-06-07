@@ -20,8 +20,17 @@ public interface AccountService extends IService<Account>, CommonService<Account
     List<Account> getAccountList();
 
     /**
-     * 获取该租户下所有Person的id和name，
+     * 获取该租户下，可用的所有Account的id和name，
      * @return  id为key，name为value的map
      */
     Map<Long, String> getAccountIdAndName();
+
+    /**
+     * 将账户名称和金额拼接在一起
+     * @param accountMap
+     * @param accountIdList
+     * @param accountMoneyList
+     * @return
+     */
+    String getAccountStrByIdAndMoney(Map<Long, String> accountMap, String accountIdList, String accountMoneyList);
 }

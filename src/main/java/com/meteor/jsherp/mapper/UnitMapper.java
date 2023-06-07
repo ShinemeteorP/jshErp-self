@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface UnitMapper extends BaseMapper<Unit> {
 
+    Unit getUnitByMaterialId(Long materialId);
 }
 
 

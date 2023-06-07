@@ -13,8 +13,16 @@ import java.util.Map;
 public interface PersonService extends IService<Person> ,CommonService<Person> {
 
     /**
-     * 获取该租户下所有Person的id和name，
+     * 获取该租户下所有，有效的Person的id和name，
      * @return  id为key，name为value的map
      */
     Map<Long, String> getPersonIdAndName();
+
+    /**
+     * 将map中符合salesMan的id，对应的name拼接起来
+     * @param personMap
+     * @param salesMan
+     * @return
+     */
+    String getPersonByMapAndIds(Map<Long, String> personMap, String salesMan);
 }

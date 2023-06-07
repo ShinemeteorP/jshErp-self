@@ -2,6 +2,8 @@ package com.meteor.jsherp.utils;
 
 import com.meteor.jsherp.response.BaseResponse;
 
+import java.util.HashMap;
+
 /**
  * @author 刘鑫
  * @version 1.0
@@ -16,6 +18,17 @@ public class ResponseUtil {
         response.setCode(200);
         response.setData(data);
     }
+    public static void resSuccessMsg(BaseResponse response, String msg){
+        HashMap<String, String> map = new HashMap<>();
+        map.put("message", msg);
+        response.setCode(200);
+        response.setData(map);
+    }
+    public static void resSuccess(BaseResponse response, Object data, String msg){
+        response.setCode(200);
+        response.setData(data);
+        response.setMsg(msg);
+    }
 
     public static BaseResponse defaultServiceExceptionResponse(){
         return new BaseResponse(500,"获取数据异常");
@@ -29,7 +42,9 @@ public class ResponseUtil {
     }
     public static void customServiceExceptionResponse(String msg, BaseResponse response){
         response.setCode(500);
-        response.setData(msg);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("message", msg);
+        response.setData(map);
     }
 
 }

@@ -18,10 +18,50 @@
             <result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <resultMap id="NextTreeResultMap" type="BaseTreeNode">
+        <result column="id" property="id"/>
+        <result column="id" property="key"/>
+        <result column="id" property="value"/>
+        <result column="name" property="title"/>
+        <collection property="children" select="getNextNodeTree" column="{currentId=currentId,id=id}"
+                    javaType="java.util.ArrayList" ofType="BaseTreeNode"/>
+    </resultMap>
+
+    <resultMap id="BaseTreeResultMap" type="BaseTreeNode">
+        <result column="id" property="id"/>
+        <result column="id" property="key"/>
+        <result column="id" property="value"/>
+        <result column="name" property="title"/>
+        <collection column="{currentId=currentId,id=id}" property="children" javaType="java.util.ArrayList"
+                    ofType="BaseTreeNode" select="getNextNodeTree"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
         id,name,category_level,
         parent_id,sort,serial_no,
         remark,create_time,update_time,
         tenant_id,delete_flag
     </sql>
+<!--    List<BaseTreeNode> getMaterialCategoryTree(Long id);-->
+    <select id="getMaterialCategoryTree" resultMap = "BaseTreeResultMap">
+        select id , name, #{id} as currentId
+            from jsh_material_category
+            where parent_id is null
+            <if test="id != null">
+                and id != #{id}
+            </if>
+            and delete_flag != '1'
+            order by sort asc
+    </select>
+
+    <select id="getNextNodeTree" resultMap="NextTreeResultMap">
+        select id, name, #{currentId} as currentId
+            from jsh_material_category
+            where delete_flag != '1'
+            and parent_id = #{id}
+            <if test="currentId != null">
+                and id != #{currentId}
+            </if>
+            order by sort asc
+    </select>
 </mapper>

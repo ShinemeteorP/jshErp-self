@@ -195,6 +195,9 @@ public class StringUtil {
      * @return
      */
     public static List<Long> strToLongList(String strArr) {
+        if(!StringUtils.hasText(strArr)){
+            return null;
+        }
         List<Long> idList=new ArrayList<Long>();
         String[] d=strArr.split(",");
         for (int i = 0, size = d.length; i < size; i++) {

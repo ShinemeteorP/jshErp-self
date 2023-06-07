@@ -1,5 +1,6 @@
 package com.meteor.jsherp.utils;
 
+import com.meteor.jsherp.constant.BusinessConstant;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,8 @@ import java.util.regex.Pattern;
  * @version 1.0
  */
 public class CommonUtil {
+
+    private static final SimpleDateFormat format = new SimpleDateFormat(BusinessConstant.DEFAULT_DATETIME_FORMAT);
 
     public static String getToken(){
         String s = UUID.randomUUID().toString().replaceAll("-", "");
@@ -134,8 +137,11 @@ public class CommonUtil {
      *
      * @return 格式化后的日期格式
      */
-    public static String getCenternTime(Date date) {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+    public static String parseFullDateToStr(Date date) {
+        if(date != null) {
+            return format.format(date);
+        }
+        return "";
     }
 
     public static String parseDayToTime(String day, String timeStr) {

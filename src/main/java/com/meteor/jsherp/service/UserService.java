@@ -2,6 +2,7 @@ package com.meteor.jsherp.service;
 
 import com.meteor.jsherp.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.meteor.jsherp.domain.extand.UserEx;
 
 /**
 * @author 刘鑫
@@ -45,4 +46,16 @@ public interface UserService extends IService<User>, CommonService<User> {
      * @param token
      */
     void logOut(String token);
+
+    /**
+     * 检验用户名是否存在
+     * @param
+     */
+    void checkLoginName(Long id, String loginName);
+
+    /**
+     * 进行用户注册
+     * @param user 待注册的用户
+     */
+    void register(UserEx user);
 }

@@ -24,6 +24,10 @@ public class PlatformConfigController {
     @Resource
     private PlatformConfigService platformConfigService;
 
+    /**
+     * 获取平台名字
+     * @return
+     */
     @GetMapping("/getPlatform/name")
     public String getPlatformName(){
         PlatformConfig config = null;
@@ -36,6 +40,10 @@ public class PlatformConfigController {
         return config.getPlatformValue();
     }
 
+    /**
+     * 获取平台官网地址
+     * @return
+     */
     @GetMapping("/getPlatform/url")
     public String getPlatformUrl(){
         PlatformConfig config = null;
@@ -48,6 +56,11 @@ public class PlatformConfigController {
         return config.getPlatformValue();
     }
 
+    /**
+     * 根据字段名字，获取域官网相关对应的值
+     * @param platformKey 字段名称
+     * @return
+     */
     @GetMapping("/getPlatformConfigByKey")
     public BaseResponse getPlatformConfigByKey(@RequestParam("platformKey") String platformKey){
         BaseResponse response = new BaseResponse();

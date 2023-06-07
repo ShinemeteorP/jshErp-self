@@ -1,5 +1,6 @@
-package com.meteor.jsherp.domain;
+package com.meteor.jsherp.domain.extand;
 
+import com.meteor.jsherp.domain.DepotHead;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -9,7 +10,7 @@ import java.math.BigDecimal;
  * @version 1.0
  */
 @Data
-public class DepotHeadBo extends DepotHead{
+public class DepotHeadEx extends DepotHead {
 
     private String projectName;
 

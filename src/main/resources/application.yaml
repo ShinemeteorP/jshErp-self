@@ -36,7 +36,7 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
       logic-delete-field: deleteFlag
-#  type-aliases-package: com.meteor.jsherp.domain
+  type-aliases-package: com.meteor.jsherp.domain
 
 #租户对应的角色id
 manage:

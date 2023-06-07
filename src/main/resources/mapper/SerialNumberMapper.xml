@@ -28,4 +28,109 @@
         update_time,updater,in_bill_no,
         out_bill_no,tenant_id
     </sql>
+<!--    int checkAndUpdateSerialNumber(Long materialId, String number, Long id, Date date, String[] numberList);-->
+    <update id="checkAndUpdateSerialNumber">
+        update jsh_serial_number set is_sell = '1',
+        <if test="number != null and number != ''">
+            out_bill_no = #{number},
+        </if>
+        creator = #{id}, create_time = #{date}
+        where is_sell !='1'
+        <if test="numberList != null">
+            and serial_number in
+            <foreach collection="numberList" separator="," item="serialNumber" close=")" open="(">
+                #{serialNumber}
+            </foreach>
+        </if>
+        <if test="materialId != null">
+            and material_id = #{materialId}
+        </if>
+        and delete_flag = '0'
+    </update>
+
+<!--    List<SerialNumberEx> getSerialNumberListByParam(String name, String number, Long depotId, String barCode, int offset, Integer rows);-->
+    <select id="getSerialNumberListByParam" resultType="SerialNumberEx">
+        select
+        ser.id, ser.serial_number, ser.in_bill_no, ser.create_time, ser.update_time
+        FROM jsh_serial_number ser
+        left join jsh_material m on m.id=ser.material_id and ifnull(m.delete_flag, '0') != '1'
+        left join jsh_material_extend me on me.material_id=m.id and ifnull(me.delete_flag,'0') !='1'
+        where 1=1 and me.default_flag=1
+        <if test="name != null">
+            <bind name="bindName" value="'%'+name+'%'"/>
+            and ser.serial_number like #{bindName}
+        </if>
+        <if test="depotId != null">
+            and ser.depot_id = #{depotId}
+        </if>
+        <if test="barCode != null">
+            and me.bar_code= #{barCode}
+        </if>
+        and (ser.is_sell = '0'
+        <if test="number != null">
+            or ser.out_bill_no = #{number}
+        </if>
+        )
+        and ifnull(ser.delete_flag,'0') !='1'
+        order by ser.id desc
+        <if test="offset != null and rows != null">
+            limit #{offset},#{rows}
+        </if>
+    </select>
+
+<!--    Long getSerialNumberCountByParam(String name, String number, Long depotId, String barCode);-->
+    <select id="getSerialNumberCountByParam" resultType="long">
+        select
+        count(1)
+        FROM jsh_serial_number ser
+        left join jsh_material m on m.id=ser.material_id and ifnull(m.delete_flag, '0') != '1'
+        left join jsh_material_extend me on me.material_id=m.id and ifnull(me.delete_flag,'0') !='1'
+        where 1=1 and me.default_flag=1
+        <if test="name != null">
+            <bind name="bindName" value="'%'+name+'%'"/>
+            and ser.serial_number like #{bindName}
+        </if>
+        <if test="depotId != null">
+            and ser.depot_id = #{depotId}
+        </if>
+        <if test="barCode != null">
+            and me.bar_code= #{barCode}
+        </if>
+        and (ser.is_sell = '0'
+        <if test="number != null">
+            or ser.out_bill_no = #{number}
+        </if>
+        )
+        and ifnull(ser.delete_flag,'0') !='1'
+        order by ser.id desc
+    </select>
+
+<!--    int updateByOutBillNoAndMId(Long materialId, String outBillNo, int count, Long id);-->
+    <update id="updateByOutBillNoAndMId">
+        update jsh_serial_number
+            set is_sell = '0', out_bill_no = null, update_time = now(), updater = #{id}
+            where ifnull(delete_flag,'0') = '0'
+              and is_sell != '0'
+            <if test="materialId != null">
+                and material_id = #{materialId}
+            </if>
+            <if test='outBillNo != null and !"".equals(outBillNo)'>
+                and out_bill_no = #{outBillNo}
+            </if>
+                and id in (
+                select sub.id
+                    from jsh_serial_number sub
+                    where ifnull(delete_flag,'0') = '0'
+                    and is_sell != '0'
+                    <if test="materialId != null">
+                        and material_id = #{materialId}
+                    </if>
+                    <if test='outBillNo != null and !"".equals(outBillNo)'>
+                        and out_bill_no = #{outBillNo}
+                    </if>
+                    limit 0,#{count}
+            )
+    </update>
+
+
 </mapper>

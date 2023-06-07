@@ -1,14 +1,20 @@
 package com.meteor.jsherp.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.meteor.jsherp.constant.UserConstant;
 import com.meteor.jsherp.domain.Tenant;
 import com.meteor.jsherp.domain.User;
+import com.meteor.jsherp.domain.extand.UserEx;
 import com.meteor.jsherp.mapper.TenantMapper;
 import com.meteor.jsherp.mapper.UserMapper;
+import com.meteor.jsherp.service.TenantService;
+import com.meteor.jsherp.service.UserBusinessService;
 import com.meteor.jsherp.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -25,6 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UserServiceImpl extends CommonServiceImpl<UserMapper, User>
     implements UserService{
 
+    //租户对应的默认权限
+    @Value("${manage.roleId}")
+    private Long roleId;
 
     private ConcurrentHashMap<String, User> userMap = new ConcurrentHashMap<>();
 
@@ -33,6 +42,12 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, User>
 
     @Resource
     private TenantMapper tenantMapper;
+
+    @Resource
+    private UserBusinessService userBusinessService;
+
+    @Resource
+    private TenantService tenantService;
 
     @Override
     public User userLogin(String loginName, String password) {
@@ -101,6 +116,56 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, User>
         if (StringUtils.hasText(token)){
             userMap.remove(token);
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void checkLoginName(Long id, String loginName) {
+        if(StringUtils.hasText(loginName)){
+            QueryWrapper<User> wrapper = new QueryWrapper<User>().eq(UserConstant.USER_LOGIN_NAME, loginName);
+            List<User> userList = userMapper.selectList(wrapper);
+            if (userList != null && userList.size() > 0) {
+                if(userList.size() > 1){
+                    //异常日志写入并抛出异常
+                }else if(userList.size() == 1){
+                    if(id == null || (id != null && id != userList.get(0).getId())){
+                        //异常日志写入并抛出异常
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void register(UserEx user) {
+        if("admin".equals(user.getUsername())){
+            //写入错误日志并报业务错误
+        }
+        //表明用户不是系统自带的
+        user.setIsystem(UserConstant.USER_NOT_SYSTEM);
+        if(user.getIsmanager() == null){
+            //非管理员
+            user.setIsmanager(UserConstant.USER_NOT_MANAGER);
+        }
+        user.setStatus(UserConstant.USER_STATUS_ALLOW);
+        userMapper.insert(user);
+        user.setTenantId(user.getId());
+        JSONObject object = new JSONObject();
+        object.put("type", UserConstant.USER_BUSINESS_USER_ROLE);
+        object.put("keyId", user.getId());
+        object.put("tenantId", user.getTenantId());
+        JSONArray array = new JSONArray();
+        array.add(roleId);
+        object.put("value", array.toString());
+        userBusinessService.insertUserBusiness(object);
+        JSONObject tenant = new JSONObject();
+        tenant.put("tenantId",user.getTenantId());
+        tenant.put("loginName",user.getLoginName());
+        tenant.put("userNumLimit",user.getUserNumLimit());
+        tenant.put("expireTime",user.getExpireTime());
+        tenant.put("remark",user.getRemark());
+        tenantService.insertTenant(tenant);
     }
 }
 

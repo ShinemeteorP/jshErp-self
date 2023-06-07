@@ -41,4 +41,11 @@
         bank_name,account_number,tax_rate,
         sort,tenant_id,delete_flag
     </sql>
+<!--    int updateAdvanceInById(Long id, BigDecimal advanceIn);-->
+    <update id="updateAdvanceInById">
+        update jsh_supplier
+            set advance_in = advance_in + #{advanceIn}
+            where id = #{id} and ifnull(delete_flag, '0') = '0'
+    </update>
+
 </mapper>

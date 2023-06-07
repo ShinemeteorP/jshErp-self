@@ -2,6 +2,7 @@ package com.meteor.jsherp.mapper;
 
 import com.meteor.jsherp.domain.Sequence;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
 * @author 刘鑫
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface SequenceMapper extends BaseMapper<Sequence> {
 
+    void updateCurrentVal(@Param("seqName") String name);
 }
 
 

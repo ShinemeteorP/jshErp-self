@@ -12,6 +12,10 @@ public interface UserConstant {
     int USER_STATUS_ALLOW = 0;
     int USER_STATUS_DELETE = 1;
     int USER_STATUS_FORBID= 2;
+    int USER_IS_SYSTEM = 1;
+    int USER_NOT_SYSTEM = 1;
+    int USER_IS_MANAGER = 1;
+    int USER_NOT_MANAGER = 1;
     String LOGIN_USER_NAME_IN_REDIS = "loginUser";
     String USER_ROLE_TYPE_PERSONAL = "个人数据";
     String USER_ROLE_TYPE_ORGANIZATION = "机构数据";

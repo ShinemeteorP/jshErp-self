@@ -10,4 +10,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SequenceService extends IService<Sequence> {
 
+    /**
+     * 更新目前的单据编号，并获取最新单据编号
+     * @return
+     */
+    String buildNumber();
 }

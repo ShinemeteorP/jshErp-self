@@ -20,4 +20,21 @@
         number,low_safe_stock,high_safe_stock,
         tenant_id,delete_flag
     </sql>
+
+<!--    BigDecimal getInitialStock(List<Long> depotIdList, Long mid);-->
+    <select id="getInitialStock" resultType="java.math.BigDecimal">
+        select ifnull(sum(m.number),0)
+        from jsh_material_initial_stock m
+        where 1=1 and m.delete_flag = '0'
+        <if test="mid != null">
+            and m.material_id = #{mid}
+        </if>
+        <if test="depotIdList.size() > 0">
+            and m.depot_id in
+            <foreach collection="depotIdList" open="(" close=")" item="depotId" separator=",">
+                #{depotId}
+            </foreach>
+        </if>
+
+    </select>
 </mapper>

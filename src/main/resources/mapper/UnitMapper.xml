@@ -25,4 +25,12 @@
         ratio,ratio_two,ratio_three,
         enabled,tenant_id,delete_flag
     </sql>
+<!--    Unit getUnitByMaterialId(Long materialId);-->
+    <select id="getUnitByMaterialId" resultType="Unit">
+        select u.* from jsh_unit u
+            right join jsh_material m on u.id = m.unit_id and u.delete_flag = '0'
+            where m.id = #{materialId}
+            and m.delete_flag = '0'
+    </select>
+
 </mapper>

@@ -1,5 +1,13 @@
 package leetcode;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.meteor.jsherp.constant.BusinessConstant;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,11 +24,47 @@ public class Test {
 //        String s = "[10][20][55][40][100]";
 //        List nums = nums(s);
 //        nums.stream().forEach(System.out::println);
-        String s = "ababba";
-//        System.out.println( repeatedSubstringPattern(s));
+        String s = "{'name':'jack','age':''}";
+        People people = JSONObject.parseObject(s, People.class);
+        System.out.println(people.getAge());
+    }
 
-        System.out.println(s.substring(1, s.length() - 1));
-        Stack stack = new Stack();
+    //先遍历物品，再遍历背包
+    @org.junit.Test
+    public void testCompletePack(){
+        int[] weight = {1, 3, 4};
+        int[] value = {7, 20, 30};
+        int bagWeight = 5;
+        int[] dp = new int[bagWeight + 1];
+        for (int i = 0; i < weight.length; i++){ // 遍历物品
+            for (int j = weight[i]; j <= bagWeight; j++){ // 遍历背包容量
+                dp[j] = Math.max(dp[j], dp[j - weight[i]] + value[i]);
+            }
+            System.out.println(Arrays.toString(dp));
+        }
+        for (int maxValue : dp){
+            System.out.println(maxValue + "   ");
+        }
+    }
+
+    //先遍历背包，再遍历物品
+    @org.junit.Test
+    public void testCompletePackAnotherWay(){
+        int[] weight = {1, 3, 4};
+        int[] value = {7, 20, 30};
+        int bagWeight = 5;
+        int[] dp = new int[bagWeight + 1];
+        for (int i = 1; i <= bagWeight; i++){ // 遍历背包容量
+            for (int j = 0; j < weight.length; j++){ // 遍历物品
+                if (i - weight[j] >= 0){
+                    dp[i] = Math.max(dp[i], dp[i - weight[j]] + value[j]);
+                }
+            }
+            System.out.println(Arrays.toString(dp));
+        }
+        for (int maxValue : dp){
+            System.out.println(maxValue + "   ");
+        }
     }
     public static String replaceSpace(String s) {
         char[] chars = s.toCharArray();
@@ -202,6 +246,8 @@ public class Test {
         return false;
     }
     public static void getNext(int[] next, String s){
+        Stack stack = new Stack();
+        stack.peek();
         char[] c = s.toCharArray();
         int j = 0;
         next[0] = j;
@@ -214,5 +260,40 @@ public class Test {
             }
             next[i] = j;
         }
+    }
+    @org.junit.Test
+    public void dateTest(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(BusinessConstant.DEFAULT_DATETIME_FORMAT);
+        LocalDate now = LocalDate.now();
+        LocalDate yesterday = now.minusDays(1);
+        LocalDate firstDayOfMonth = now.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfMonth = now.with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate firstDayOfYear = now.with(TemporalAdjusters.firstDayOfYear());
+        LocalDate lastDayOfYear = now.with(TemporalAdjusters.lastDayOfYear());
+        String todayBegin = formatter.format(now.atTime(0, 0, 0));
+        String todayEnd = formatter.format(now.atTime(23, 59, 59));
+        String yesterdayBegin = formatter.format(yesterday.atTime(0, 0, 0));
+        String yesterdayEnd = formatter.format(yesterday.atTime(23, 59, 59));
+        String monthBegin = formatter.format(firstDayOfMonth.atTime(0, 0, 0));
+        String monthEnd = formatter.format(lastDayOfMonth.atTime(23, 59, 59));
+        String yearBegin = formatter.format(firstDayOfYear.atTime(0, 0, 0));
+        String yearEnd = formatter.format(lastDayOfYear.atTime(23, 59, 59));
+        LocalDate of = LocalDate.of(2004, 2, 1);
+        LocalDate firstDayOf = of.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOf = of.with(TemporalAdjusters.lastDayOfMonth());
+        System.out.printf("今天是%s - %s\n",todayBegin, todayEnd);
+        System.out.printf("昨天是%s - %s\n",yesterdayBegin, yesterdayEnd);
+        System.out.printf("这个月是%s - %s\n",monthBegin, monthEnd);
+        System.out.printf("今年是%s - %s\n",yearBegin, yearEnd);
+        System.out.printf("二月是%s - %s\n",firstDayOf, lastDayOf);
+        System.out.println(yesterday.range(ChronoField.DAY_OF_MONTH));
+    }
+
+    @org.junit.Test
+    public void jsonTest(){
+        String test = "{'name': ''}";
+        JSONObject jsonObject = JSONObject.parseObject(test);
+        Object name = jsonObject.get("name");
+
     }
 }

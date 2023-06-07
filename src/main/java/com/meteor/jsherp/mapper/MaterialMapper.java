@@ -2,6 +2,8 @@ package com.meteor.jsherp.mapper;
 
 import com.meteor.jsherp.domain.Material;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.meteor.jsherp.domain.Unit;
+import com.meteor.jsherp.domain.extand.MaterialExUnit;
 import org.apache.ibatis.annotations.MapKey;
 
 import java.util.ArrayList;
@@ -18,6 +20,14 @@ public interface MaterialMapper extends BaseMapper<Material> {
 
     @MapKey("id")
     List<Map<String , Object>> getMaterialListMap(List<Long> idList);
+
+    List<MaterialExUnit> getMaterialListBySelectWithBarCode(List<Long> idList, String q, Long depotId, String enableSerialNumber, String enableBatchNumber, Integer currentPage, Integer pageSize);
+
+    List<MaterialExUnit> getMaterialListByBarCode(String[] barCodeList);
+
+    Unit getUnitByMaterialId(Long materialId);
+
+    Long getMaterialCountBySelectWithBarCode(List<Long> idList, String q, Long depotId, String enableSerialNumber, String enableBatchNumber);
 }
 
 

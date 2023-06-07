@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.meteor.jsherp.service.AccountItemService;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,12 +30,21 @@ public class AccountItemServiceImpl extends CommonServiceImpl<AccountItemMapper,
         QueryWrapper<AccountItem> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("bill_id", idList);
         List<AccountItem> accountItemList = accountItemMapper.selectList(queryWrapper);
+        if(accountItemList == null || accountItemList.isEmpty()){
+            return null;
+        }
         Map<Long, Long> map = new HashMap<>();
         for (AccountItem a:
              accountItemList) {
             map.put(a.getBillId(), Long.valueOf(accountItemList.size()));
         }
         return map;
+    }
+
+    @Override
+    public BigDecimal getCompletedDebt(Long id) {
+
+        return accountItemMapper.getEachAmountByBillId(id).abs();
     }
 }
 

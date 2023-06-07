@@ -42,10 +42,10 @@
 
 <!--    Map<Long, String> getMaterialListMap(ArrayList<Long> idList);-->
     <select id="getMaterialListMap" resultType="map">
-        select di.header_id id, group_concat(concat(m.name,' ',m.standard,' ',m.model)) materialList
+        select di.header_id id, group_concat(concat(ifnull(m.name,''),' ',ifnull(m.standard,''),' ',ifnull(m.model,''))) materialList
         from jsh_depot_item di
-        left join jsh_material m on di.material_id = m.id
-        where 1=1
+        left join jsh_material m on di.material_id = m.id and m.delete_flag = '0'
+        where di.delete_flag = '0'
         <if test="idList!=null">
             and  di.header_id in
             <foreach collection="idList" item="id" separator="," close=")" open="(">
@@ -54,4 +54,83 @@
         </if>
         group by di.header_id
     </select>
+
+<!--    List<MaterialExUnit> getMaterialListBySelectWithBarCode(List<Long> idList, String q, Long depotId, String enableSerialNumber, String enableBatchNumber, Integer currentPage, Integer pageSize);-->
+    <select id="getMaterialListBySelectWithBarCode" resultType="com.meteor.jsherp.domain.extand.MaterialExUnit">
+        select m.*,u.name unit_name,mc.name categoryName,me.bar_code m_bar_code,me.id meId,me.commodity_unit,me.sku from jsh_material m
+        left join jsh_material_extend me on m.id=me.material_id and me.delete_flag = '0'
+        left join jsh_unit u on m.unit_id=u.id and u.delete_flag = '0'
+        left JOIN jsh_material_category mc on m.category_id = mc.id and mc.delete_flag = '0'
+        where m.enabled=1 and me.id is not null and m.delete_flag = '0'
+        <if test="q != null and q !=''">
+            <bind name="bindKey" value="'%'+q+'%'"/>
+            and (me.bar_code like #{bindKey} or m.name like #{bindKey} or m.standard like #{bindKey} or m.model like #{bindKey} or m.color like #{bindKey})
+        </if>
+        <if test="idList.size()>0">
+            and m.category_id in
+            <foreach collection="idList" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="enableSerialNumber != null and enableSerialNumber !=''">
+            and m.enable_serial_number = #{enableSerialNumber}
+        </if>
+        <if test="enableBatchNumber != null and enableBatchNumber !=''">
+            and m.enable_batch_number = #{enableBatchNumber}
+        </if>
+        ORDER BY m.id desc, me.default_flag desc, me.id asc
+        <if test="currentPage != null and pageSize != null">
+            limit #{currentPage},#{pageSize}
+        </if>
+    </select>
+
+<!--    Long getMaterialCountBySelectWithBarCode(List<Long> idList, String q, Long depotId, String enableSerialNumber, String enableBatchNumber);-->
+    <select id="getMaterialCountBySelectWithBarCode" resultType="long">
+        select count(1) from jsh_material m
+        left join jsh_material_extend me on m.id=me.material_id and me.delete_flag = '0'
+        left join jsh_unit u on m.unit_id=u.id and u.delete_flag = '0'
+        left JOIN jsh_material_category mc on m.category_id = mc.id and mc.delete_flag = '0'
+        where m.enabled=1 and me.id is not null and m.delete_flag = '0'
+        <if test="q != null and q !=''">
+            <bind name="bindKey" value="'%'+q+'%'"/>
+            and (me.bar_code like #{bindKey} or m.name like #{bindKey} or m.standard like #{bindKey} or m.model like #{bindKey} or m.color like #{bindKey})
+        </if>
+        <if test="idList.size()>0">
+            and m.category_id in
+            <foreach collection="idList" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="enableSerialNumber != null and enableSerialNumber !=''">
+            and m.enable_serial_number = #{enableSerialNumber}
+        </if>
+        <if test="enableBatchNumber != null and enableBatchNumber !=''">
+            and m.enable_batch_number = #{enableBatchNumber}
+        </if>
+        ORDER BY m.id desc, me.default_flag desc, me.id asc
+
+    </select>
+<!--    List<MaterialExUnit> getMaterialListByBarCode(String[] barCodeList);-->
+    <select id="getMaterialListByBarCode" resultType="com.meteor.jsherp.domain.extand.MaterialExUnit">
+        select m.*,u.name unit_name, me.id meId,me.bar_code m_bar_code, me.commodity_unit, me.purchase_decimal, me.commodity_decimal,
+        me.wholesale_decimal, me.low_decimal, me.sku
+        from jsh_material m
+        left join jsh_material_extend me on m.id=me.material_id and me.delete_flag = '0'
+        left join jsh_unit u on m.unit_id=u.id and u.delete_flag = '0'
+        where m.delete_flag = '0'
+        and me.bar_code in (
+        <foreach collection="barCodeList" item="barCode" separator=",">
+            #{barCode}
+        </foreach>
+        )
+        order by me.id desc
+    </select>
+<!--    Unit getUnitByMaterialId(Long materialId);-->
+    <select id="getUnitByMaterialId" resultType="Unit">
+        select u.*
+            from jsh_material m
+            left join jsh_unit u on m.unit_id = u.id and u.delete_flag = '0'
+            where m.id = #{materialId} and m.delete_flag = '0'
+    </select>
 </mapper>
+

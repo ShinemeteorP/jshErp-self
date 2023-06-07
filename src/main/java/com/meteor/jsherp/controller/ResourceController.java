@@ -4,10 +4,7 @@ import com.meteor.jsherp.constant.ErpAllConstant;
 import com.meteor.jsherp.response.BaseResponse;
 import com.meteor.jsherp.service.common.ResourceService;
 import com.meteor.jsherp.utils.ResponseUtil;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -55,6 +52,89 @@ public class ResourceController {
         } catch (Exception exception) {
             exception.printStackTrace();
             ResponseUtil.customServiceExceptionResponse(ErpAllConstant.REQUEST_ERROR_MSG, response);
+
+        }
+        return response;
+    }
+
+    /**
+     * 根据id查找对应的数据
+     * @param apiName
+     * @param id
+     * @return
+     */
+    @GetMapping("/{apiName}/info")
+    public BaseResponse info(@PathVariable("apiName") String apiName, @RequestParam("id") Long id){
+        BaseResponse response = new BaseResponse();
+        try {
+            Object obj = resourceService.selectOne(apiName, id);
+            HashMap<String, Object> map = new HashMap<>();
+            if(obj != null) {
+                map.put("info", obj);
+                map.put("message", ErpAllConstant.REQUEST_SUCCESS_MSG);
+                ResponseUtil.resSuccess(response, map);
+            }else{
+                ResponseUtil.customServiceExceptionResponse(ErpAllConstant.REQUEST_NOT_FIND_ANY_DATA, response);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            ResponseUtil.customServiceExceptionResponse(ErpAllConstant.REQUEST_ERROR_MSG, response);
+        }
+        return response;
+    }
+
+    @DeleteMapping("/{apiName}/delete")
+    public BaseResponse delete(@PathVariable("apiName") String apiName,
+                               @RequestParam("id") Long id,
+                               @RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) String token){
+        BaseResponse response = new BaseResponse();
+        try {
+            HashMap<String, Object> map = new HashMap<>();
+            String message;
+            int count = resourceService.delete(apiName, id, token);
+            if(count == 1){
+                message = ErpAllConstant.REQUEST_SUCCESS_MSG;
+                response.setCode(200);
+            }else if(count == -1){
+                message = ErpAllConstant.REQUEST_TEST_USER_MSG;
+                response.setCode(-1);
+            }else{
+                throw new RuntimeException();
+            }
+            map.put("message", message);
+            response.setData(map);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+//            ResponseUtil.defaultServiceExceptionResponse(response);
+            throw e;
+        }
+        return response;
+    }
+
+    @DeleteMapping("/{apiName}/deleteBatch")
+    public BaseResponse deleteBatch(@PathVariable("apiName") String apiName,
+                               @RequestParam("ids") String ids,
+                               @RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) String token){
+        BaseResponse response = new BaseResponse();
+        try {
+            HashMap<String, Object> map = new HashMap<>();
+            String message;
+            int count = resourceService.deleteBatch(apiName, ids, token);
+            if(count == 1){
+                message = ErpAllConstant.REQUEST_SUCCESS_MSG;
+                response.setCode(200);
+            }else if(count == -1){
+                message = ErpAllConstant.REQUEST_TEST_USER_MSG;
+                response.setCode(-1);
+            }else{
+                throw new RuntimeException();
+            }
+            map.put("message", message);
+            response.setData(map);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+//            ResponseUtil.defaultServiceExceptionResponse(response);
+            throw e;
         }
         return response;
     }

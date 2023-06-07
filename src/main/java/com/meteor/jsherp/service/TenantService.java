@@ -1,5 +1,6 @@
 package com.meteor.jsherp.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.meteor.jsherp.domain.Tenant;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -17,4 +18,10 @@ public interface TenantService extends IService<Tenant>, CommonService<Tenant> {
      * @return
      */
     Tenant getByUserId(long tenantId);
+
+    /**
+     * 插入新增租户
+     * @param tenant
+     */
+    int insertTenant(JSONObject tenant);
 }

@@ -2,6 +2,9 @@ package com.meteor.jsherp.mapper;
 
 import com.meteor.jsherp.domain.MaterialCategory;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.meteor.jsherp.domain.extand.BaseTreeNode;
+
+import java.util.List;
 
 /**
 * @author 刘鑫
@@ -11,6 +14,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface MaterialCategoryMapper extends BaseMapper<MaterialCategory> {
 
+
+    List<BaseTreeNode> getMaterialCategoryTree(Long id);
+
+    List<BaseTreeNode> getNextNodeTree(Long id, Long currentId);
 }
 
 

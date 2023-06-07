@@ -23,6 +23,11 @@ public class MsgController {
     @Resource
     private MsgService msgService;
 
+    /**
+     * 根据消息状态获取消息列表
+     * @param status 消息状态，1表示未读，2表示已读
+     * @return
+     */
     @GetMapping("/getMsgByStatus")
     public BaseResponse getMsgByStatus(@RequestParam("status") String status){
 

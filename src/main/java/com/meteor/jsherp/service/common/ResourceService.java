@@ -12,16 +12,29 @@ import java.util.Map;
  * @version 1.0
  */
 @Service
-public class ResourceService<T> {
+public class ResourceService {
 
     @Resource
     private ServiceContainer serviceContainer;
 
-    public List<T> select(String apiName, Map<String, String > paramMap){
+    public <T> List<T> select(String apiName, Map<String, String > paramMap){
         CommonService service = serviceContainer.getService(apiName);
         return service.select(paramMap);
     }
 
 
+    public <T> T selectOne(String apiName, Long id) {
+        CommonService<T> service = serviceContainer.getService(apiName);
+        return service.selectOne(id);
+    }
 
+    public <T> int delete(String apiName, Long id, String token) {
+        CommonService<T> service = serviceContainer.getService(apiName);
+        return service.delete(id, token);
+    }
+
+    public <T> int deleteBatch(String apiName, String ids, String token) {
+        CommonService<T> service = serviceContainer.getService(apiName);
+        return service.deleteBatch(ids, token);
+    }
 }

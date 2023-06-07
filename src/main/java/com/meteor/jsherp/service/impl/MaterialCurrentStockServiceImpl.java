@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-04-13 18:07:55
 */
 @Service
-public class MaterialCurrentStockServiceImpl extends ServiceImpl<MaterialCurrentStockMapper, MaterialCurrentStock>
+public class MaterialCurrentStockServiceImpl extends CommonServiceImpl<MaterialCurrentStockMapper, MaterialCurrentStock>
     implements MaterialCurrentStockService {
 
 }

@@ -2,7 +2,7 @@ package com.meteor.jsherp.mapper;
 
 import com.meteor.jsherp.domain.DepotHead;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.meteor.jsherp.domain.DepotHeadBo;
+import com.meteor.jsherp.domain.extand.DepotHeadEx;
 import com.meteor.jsherp.domain.Organization;
 
 
@@ -42,6 +42,7 @@ public interface DepotHeadMapper extends BaseMapper<DepotHead> {
      * @return
      */
     BigDecimal getRetailSaleStatistics(String type, String subType, int hasSupplier, String startTime, String endTime, long[] userIds, String approval);
+    List<DepotHead> test(String type, String subType, int hasSupplier, String startTime, String endTime, long[] userIds, String approval);
 
     /**
      * 子菜单表格根据条件查询
@@ -67,7 +68,19 @@ public interface DepotHeadMapper extends BaseMapper<DepotHead> {
      * @param pageSize
      * @return
      */
-    List<DepotHeadBo> getDepotHeadBoList(String type, String subType, long[] userIdList, String hasDebt, String[] statusArray, String[] purchaseStatusArray, String number, String linkNumber, String beginTime, String endTime, String materialParam, Long organId, List<Organization> organArray, Long creator, Long depotId, List<Long> depotArray, Long accountId, String remark, int start, Integer pageSize);
+    List<DepotHeadEx> getDepotHeadBoList(String type, String subType, long[] userIdList, String hasDebt, String[] statusArray, String[] purchaseStatusArray, String number, String linkNumber, String beginTime, String endTime, String materialParam, Long organId, List<Organization> organArray, Long creator, Long depotId, List<Long> depotArray, Long accountId, String remark, int start, Integer pageSize);
+
+
+    BigDecimal getDepositByLinkNumberAndNumber(String linkNumber, String number);
+
+    /**
+     * 通过number获取depotHead的类别，包括账户名称、机构名称、对接人、电话、地址
+     * @param number
+     * @return
+     */
+    List<DepotHeadEx> getDepotHeadDetailByNumber(String number);
+
+
 }
 
 

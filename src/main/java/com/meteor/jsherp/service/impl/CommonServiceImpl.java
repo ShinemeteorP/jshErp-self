@@ -15,6 +15,8 @@ import java.util.Set;
  * @author 刘鑫
  * @version 1.0
  */
+
+
 public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> implements CommonService<T> {
 
 
@@ -59,5 +61,20 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
     @Override
     public List<? extends T> select(Map<String, String> paramMap) {
         return null;
+    }
+
+    @Override
+    public T selectOne(Long id) {
+        return super.baseMapper.selectById(id);
+    }
+
+    @Override
+    public int delete(Long id, String token) {
+        return 0;
+    }
+
+    @Override
+    public int deleteBatch(String ids, String token) {
+        return 0;
     }
 }

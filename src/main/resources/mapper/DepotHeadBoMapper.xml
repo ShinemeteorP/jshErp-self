@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.meteor.jsherp.mapper.DepotHeadBoMapper">
-    <resultMap id="ResultMapperBo" type="com.meteor.jsherp.domain.DepotHeadBo">
+    <resultMap id="ResultMapperBo" type="com.meteor.jsherp.domain.extand.DepotHeadEx">
         <result column="organName" property="organName"/>
         <result column="userName" property="userName"/>
         <result column="accountName" property="accountName"/>

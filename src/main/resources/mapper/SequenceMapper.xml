@@ -17,4 +17,9 @@
         seq_name,min_value,max_value,
         current_val,increment_val,remark
     </sql>
+
+<!--    void updateCurrentVal();-->
+    <update id="updateCurrentVal">
+        update jsh_sequence set current_val = current_val + increment_val where seq_name = #{seqName} ;
+    </update>
 </mapper>

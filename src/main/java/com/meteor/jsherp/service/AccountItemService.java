@@ -3,6 +3,7 @@ package com.meteor.jsherp.service;
 import com.meteor.jsherp.domain.AccountItem;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -15,8 +16,16 @@ public interface AccountItemService extends IService<AccountItem>, CommonService
 
     /**
      * 获取对应的billid列表的记录条数
-     * @param idList
-     * @return
+     * @param idList  billdid列表
+     * @return id为key，对应记录条数为value的map
      */
     Map<Long, Long> getBillCountMap(ArrayList<Long> idList);
+
+    /**
+     * 获取收款单或付款单的数量
+     * 根据billId获取对应的each_amount之和
+     * @param id  bill_id
+     * @return
+     */
+    BigDecimal getCompletedDebt(Long id);
 }
