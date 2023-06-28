@@ -81,13 +81,18 @@ public class CommonUtil {
      * @param str 带有中括号的字符串
      * @return 数字
      */
-    public static long getNumber(String str){
+    public static List<Long> getNumberWithMid(String str){
+        ArrayList<Long> longs = new ArrayList<>();
         Pattern p = Pattern.compile("(\\[[^\\]]*\\])");
         Matcher m = p.matcher(str);
-        if (m.find()){
-           return Long.parseLong(m.group().substring(1, m.group().length()-1));
+        while (m.find()){
+           longs.add(Long.parseLong(m.group().substring(1, m.group().length()-1)));
         }
-        throw new RuntimeException("CommonUtil类的getNumber方法出错，该字符串没有中括号");
+        if(longs.size() == 0){
+
+            throw new RuntimeException("CommonUtil类的getNumber方法出错，该字符串没有中括号");
+        }
+        return longs;
     }
 
 

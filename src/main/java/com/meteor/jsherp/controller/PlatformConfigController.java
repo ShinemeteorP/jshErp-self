@@ -26,10 +26,11 @@ public class PlatformConfigController {
 
     /**
      * 获取平台名字
+     *
      * @return
      */
     @GetMapping("/getPlatform/name")
-    public String getPlatformName(){
+    public String getPlatformName() {
         PlatformConfig config = null;
         try {
             config = platformConfigService.getPlatformConfigByKey(ErpAllConstant.PLATFORM_NAME);
@@ -42,10 +43,11 @@ public class PlatformConfigController {
 
     /**
      * 获取平台官网地址
+     *
      * @return
      */
     @GetMapping("/getPlatform/url")
-    public String getPlatformUrl(){
+    public String getPlatformUrl() {
         PlatformConfig config = null;
         try {
             config = platformConfigService.getPlatformConfigByKey(ErpAllConstant.PLATFORM_URL);
@@ -58,19 +60,17 @@ public class PlatformConfigController {
 
     /**
      * 根据字段名字，获取域官网相关对应的值
+     *
      * @param platformKey 字段名称
      * @return
      */
     @GetMapping("/getPlatformConfigByKey")
-    public BaseResponse getPlatformConfigByKey(@RequestParam("platformKey") String platformKey){
+    public BaseResponse getPlatformConfigByKey(@RequestParam("platformKey") String platformKey) {
         BaseResponse response = new BaseResponse();
-        try {
-            PlatformConfig config = platformConfigService.getPlatformConfigByKey(platformKey);
-            ResponseUtil.resSuccess(response, config);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            ResponseUtil.defaultServiceExceptionResponse(response);
-        }
+
+        PlatformConfig config = platformConfigService.getPlatformConfigByKey(platformKey);
+        ResponseUtil.resSuccess(response, config);
+
         return response;
     }
 }

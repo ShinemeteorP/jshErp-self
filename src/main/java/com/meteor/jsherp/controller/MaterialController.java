@@ -24,6 +24,7 @@ public class MaterialController {
 
     /**
      * 根据已知的参数条件，查询符合条件的物料信息
+     *
      * @param categoryId
      * @param q
      * @param mpList
@@ -43,17 +44,15 @@ public class MaterialController {
                                    @RequestParam(value = "enableBatchNumber", required = false) String enableBatchNumber,
                                    @RequestParam("page") Integer currentPage,
                                    @RequestParam("rows") Integer pageSize,
-                                   @RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) String token){
+                                   @RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) String token) {
         JSONObject obj = null;
-        try {
-            obj = new JSONObject();
-            JSONArray materialList = materialService.findBySelect(categoryId, q, mpList, depotId, enableSerialNumber, enableBatchNumber, currentPage, pageSize, token);
-            Long total = materialService.getCountBySelect(categoryId, q, mpList, depotId, enableSerialNumber, enableBatchNumber);
-            obj.put("total", total);
-            obj.put("rows", materialList);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+
+        obj = new JSONObject();
+        JSONArray materialList = materialService.findBySelect(categoryId, q, mpList, depotId, enableSerialNumber, enableBatchNumber, currentPage, pageSize, token);
+        Long total = materialService.getCountBySelect(categoryId, q, mpList, depotId, enableSerialNumber, enableBatchNumber);
+        obj.put("total", total);
+        obj.put("rows", materialList);
+
         return obj;
     }
 
@@ -62,15 +61,12 @@ public class MaterialController {
                                              @RequestParam(value = "depotId", required = false) Long depotId,
                                              @RequestParam("mpList") String mpList,
                                              @RequestParam(required = false, value = "prefixNo") String prefixNo,
-                                             @RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) String token){
+                                             @RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) String token) {
         BaseResponse response = new BaseResponse();
-        try {
-            List<MaterialExUnit> list = materialService.getMaterialListByBarCode(barCode, depotId, mpList, prefixNo, token);
-            ResponseUtil.resSuccess(response, list);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            ResponseUtil.defaultServiceExceptionResponse(response);
-        }
+
+        List<MaterialExUnit> list = materialService.getMaterialListByBarCode(barCode, depotId, mpList, prefixNo, token);
+        ResponseUtil.resSuccess(response, list);
+
 
         return response;
     }

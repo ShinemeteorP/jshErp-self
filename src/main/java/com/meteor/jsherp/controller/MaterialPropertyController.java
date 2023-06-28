@@ -23,15 +23,12 @@ public class MaterialPropertyController {
     private MaterialPropertyService materialPropertyService;
 
     @GetMapping("/getAllList")
-    public BaseResponse getAllList(){
+    public BaseResponse getAllList() {
         BaseResponse response = new BaseResponse();
-        try {
-            List<MaterialProperty> list = materialPropertyService.list();
-            ResponseUtil.resSuccess(response, list);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            ResponseUtil.defaultServiceExceptionResponse(response);
-        }
+
+        List<MaterialProperty> list = materialPropertyService.list();
+        ResponseUtil.resSuccess(response, list);
+
         return response;
     }
 }

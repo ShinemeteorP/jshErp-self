@@ -29,4 +29,5 @@ public class UserEx extends User {
     private String expireTime;
 
     private String leaderFlagStr;
+
 }

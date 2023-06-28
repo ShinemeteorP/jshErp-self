@@ -56,4 +56,5 @@ public class DepotItemExMaterialAndDepot extends DepotItem {
     private String barCode;
 
     private BigDecimal weight;
+
 }

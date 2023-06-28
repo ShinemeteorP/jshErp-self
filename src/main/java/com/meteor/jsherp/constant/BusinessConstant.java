@@ -162,21 +162,21 @@ public interface BusinessConstant {
      * 用户是否系统自带
      * 0、非系统自带，1系统自带
      * */
-    byte USER_NOT_SYSTEM = 0;
-    byte USER_IS_SYSTEM = 1;
+    int USER_NOT_SYSTEM = 0;
+    int USER_IS_SYSTEM = 1;
     /**
      * 用户是否为管理者
      * 0、管理者，1员工
      * */
-    byte USER_IS_MANAGER = 0;
-    byte USER_NOT_MANAGER = 1;
+    int USER_IS_MANAGER = 0;
+    int USER_NOT_MANAGER = 1;
     /**
      * 用户状态
      * 0：正常，1：删除，2封禁
      * */
-    byte USER_STATUS_NORMAL = 0;
-    byte USER_STATUS_DELETE = 1;
-    byte USER_STATUS_BANNED = 2;
+    int USER_STATUS_NORMAL = 0;
+    int USER_STATUS_DELETE = 1;
+    int USER_STATUS_BANNED = 2;
     /**
      * 日志操作
      * 新增、修改、删除、登录、导入

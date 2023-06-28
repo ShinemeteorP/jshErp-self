@@ -18,7 +18,7 @@ server:
 # mysql数据库连接
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/jsh_erp?useUnicode=true&characterEncoding=utf8&useCursorFetch=true&defaultFetchSize=500&allowMultiQueries=true&rewriteBatchedStatements=true&useSSL=false
+    url: jdbc:mysql://192.168.66.1:3306/jsh_erp?useUnicode=true&characterEncoding=utf8&useCursorFetch=true&defaultFetchSize=500&allowMultiQueries=true&rewriteBatchedStatements=true&useSSL=false
     username: root
     password: hsp
     driver-class-name: com.mysql.jdbc.Driver
@@ -27,6 +27,8 @@ spring:
     host: 192.168.66.131
     port: 6379
     password: 1234abcd
+#  profiles:
+#    active: dev
 
 #mybatis-plus配置
 mybatis-plus:
@@ -37,7 +39,11 @@ mybatis-plus:
       logic-not-delete-value: 0
       logic-delete-field: deleteFlag
   type-aliases-package: com.meteor.jsherp.domain
-
+  configuration:
+#    开启分步延迟加载的两个配置
+    lazy-loading-enabled: true
+    aggressive-lazy-loading: false
+    use-deprecated-executor: false
 #租户对应的角色id
 manage:
   roleId: 10

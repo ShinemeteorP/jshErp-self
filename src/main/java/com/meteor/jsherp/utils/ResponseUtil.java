@@ -3,6 +3,7 @@ package com.meteor.jsherp.utils;
 import com.meteor.jsherp.response.BaseResponse;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author 刘鑫
@@ -23,6 +24,11 @@ public class ResponseUtil {
         map.put("message", msg);
         response.setCode(200);
         response.setData(map);
+    }
+    public static void resSuccessMsg(BaseResponse response, Map data, String msg){
+        data.put("message", msg);
+        response.setCode(200);
+        response.setData(data);
     }
     public static void resSuccess(BaseResponse response, Object data, String msg){
         response.setCode(200);
@@ -46,5 +52,12 @@ public class ResponseUtil {
         map.put("message", msg);
         response.setData(map);
     }
+
+    public static BaseResponse customServiceExceptionResponse(int code, String msg){
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", msg);
+        return new BaseResponse(code, msg);
+    }
+
 
 }

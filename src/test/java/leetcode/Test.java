@@ -24,9 +24,12 @@ public class Test {
 //        String s = "[10][20][55][40][100]";
 //        List nums = nums(s);
 //        nums.stream().forEach(System.out::println);
-        String s = "{'name':'jack','age':''}";
-        People people = JSONObject.parseObject(s, People.class);
-        System.out.println(people.getAge());
+//        String s = "{'name':'jack','age':''}";
+//        People people = JSONObject.parseObject(s, People.class);
+//        System.out.println(people.getAge());
+        char c = 10 + 'a';
+        System.out.println(Character.toString(c));
+
     }
 
     //先遍历物品，再遍历背包

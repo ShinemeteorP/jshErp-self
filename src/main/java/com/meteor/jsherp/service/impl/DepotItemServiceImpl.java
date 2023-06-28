@@ -12,19 +12,16 @@ import com.meteor.jsherp.domain.*;
 import com.meteor.jsherp.domain.extand.DepotItemExMaterialAndDepot;
 import com.meteor.jsherp.domain.extand.DepotItemExStock;
 import com.meteor.jsherp.domain.extand.MaterialExUnit;
+import com.meteor.jsherp.exception.BusinessException;
 import com.meteor.jsherp.mapper.DepotItemMapper;
 import com.meteor.jsherp.service.*;
 import com.meteor.jsherp.utils.CommonUtil;
 import com.meteor.jsherp.utils.StringUtil;
-import com.sun.org.apache.bcel.internal.ExceptionConstants;
-import lombok.var;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -251,16 +248,16 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
                     //组装拆卸单不能选择批号或序列号商品
                     if(BusinessConstant.SUB_TYPE_ASSEMBLE.equals(depotHead.getSubType()) ||
                             BusinessConstant.SUB_TYPE_DISASSEMBLE.equals(depotHead.getSubType())) {
-                        throw new RuntimeException(ExceptionConstant.MATERIAL_ASSEMBLE_SELECT_ERROR_MSG);
+                        throw new BusinessException(ExceptionConstant.MATERIAL_ASSEMBLE_SELECT_ERROR_CODE,ExceptionConstant.MATERIAL_ASSEMBLE_SELECT_ERROR_MSG);
                     }
                     //调拨单不能选择批号或序列号商品（该场景走出库和入库单）
                     if(BusinessConstant.SUB_TYPE_TRANSFER.equals(depotHead.getSubType())) {
-                        throw new RuntimeException(ExceptionConstant.MATERIAL_TRANSFER_SELECT_ERROR_MSG);
+                        throw new BusinessException(ExceptionConstant.MATERIAL_TRANSFER_SELECT_ERROR_CODE, ExceptionConstant.MATERIAL_TRANSFER_SELECT_ERROR_MSG);
                     }
                     //盘点业务不能选择批号或序列号商品（该场景走出库和入库单）
                     if(BusinessConstant.SUB_TYPE_CHECK_ENTER.equals(depotHead.getSubType())
                             ||BusinessConstant.SUB_TYPE_REPLAY.equals(depotHead.getSubType())) {
-                        throw new RuntimeException(ExceptionConstant.MATERIAL_STOCK_CHECK_ERROR_MSG);
+                        throw new BusinessException(ExceptionConstant.MATERIAL_STOCK_CHECK_ERROR_CODE, ExceptionConstant.MATERIAL_STOCK_CHECK_ERROR_MSG);
                     }
                 }
                 if(StringUtils.hasText(obj.getString("snList"))){
@@ -272,15 +269,15 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
                             Long depotId = obj.getLong("depotId");
                             //录入序列号
                             serialNumberService.addSerialNumberByBill(depotHead.getType(), depotHead.getSubType(),
-                                    depotHead.getNumber(), materialExtend.getMaterialId(), depotItem.getDepotId(), depotItem.getSnList(), user.getId());
+                                    depotHead.getNumber(), materialExtend.getMaterialId(), depotId, depotItem.getSnList(), user.getId());
                         }else{
-                            throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_SN_NUMBER_FAILED_MSG);
+                            throw new BusinessException(ExceptionConstant.DEPOT_HEAD_SN_NUMBER_FAILED_CODE,ExceptionConstant.DEPOT_HEAD_SN_NUMBER_FAILED_MSG);
                         }
                     }
                 }else{
                     if("入库".equals(depotHead.getType()) || "出库".equals(depotHead.getType())){
                         if(BusinessConstant.ENABLE_SERIAL_NUMBER_ENABLED.equals(material.getEnableSerialNumber())){
-                            throw new RuntimeException(ExceptionConstant.MATERIAL_SERIAL_NUMBER_EMPTY_MSG);
+                            throw new BusinessException(ExceptionConstant.MATERIAL_SERIAL_NUMBER_EMPTY_CODE, ExceptionConstant.MATERIAL_SERIAL_NUMBER_EMPTY_MSG);
                         }
                     }
                 }
@@ -289,7 +286,7 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
                 }else {
                     if (BusinessConstant.ENABLE_BATCH_NUMBER_ENABLED.equals(material.getEnableBatchNumber())) {
                         if ("入库".equals(depotHead.getType()) || "出库".equals(depotHead.getType())) {
-                            throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_BATCH_NUMBER_EMPTY_MSG);
+                            throw new BusinessException(ExceptionConstant.DEPOT_HEAD_BATCH_NUMBER_EMPTY_CODE , ExceptionConstant.DEPOT_HEAD_BATCH_NUMBER_EMPTY_MSG);
                         }
                     }
                 }
@@ -329,7 +326,7 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
                         BigDecimal preNumber = obj.getBigDecimal("preNumber");
                         BigDecimal finishNumber = obj.getBigDecimal("finishNumber");
                         if(depotItem.getOperNumber().add(finishNumber).compareTo(preNumber) > 0){
-                            throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_NUMBER_NEED_EDIT_FAILED_MSG);
+                            throw new BusinessException(ExceptionConstant.DEPOT_HEAD_NUMBER_NEED_EDIT_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_NUMBER_NEED_EDIT_FAILED_MSG);
                         }
                     }else if("update".equals(actionType)){
                         //在更新模式进行状态赋值
@@ -340,7 +337,7 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
                         //除去此单据之外的已入库|已出库单据数量
                         BigDecimal realFinishNumber = getRealFinishNumber(depotHead.getSubType(),  depotItem.getMaterialExtendId(), depotItem.getLinkId(), preHeaderId, depotHead.getId(), unit, unitStr);
                         if(depotItem.getOperNumber().add(realFinishNumber).compareTo(preNumber) > 0){
-                            throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_NUMBER_NEED_EDIT_FAILED_MSG);
+                            throw new BusinessException(ExceptionConstant.DEPOT_HEAD_NUMBER_NEED_EDIT_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_NUMBER_NEED_EDIT_FAILED_MSG);
                         }
                     }
 
@@ -348,7 +345,7 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
                 if (StringUtils.hasText(obj.getString("unitPrice"))){
                     depotItem.setUnitPrice(obj.getBigDecimal("unitPrice"));
                     if (materialExtend.getLowDecimal() != null && depotItem.getUnitPrice().compareTo(materialExtend.getLowDecimal()) < 0){
-                        throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_UNIT_PRICE_LOW_MSG);
+                        throw new BusinessException(ExceptionConstant.DEPOT_HEAD_UNIT_PRICE_LOW_CODE, ExceptionConstant.DEPOT_HEAD_UNIT_PRICE_LOW_MSG);
                     }
                 }
                 //如果是销售出库、销售退货、零售出库、零售退货则给采购单价字段赋值（如果是批次商品，则要根据批号去找之前的入库价），否则是商品的采购价
@@ -375,7 +372,7 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
                     //只要不是销售订单和采购订单，仓库为空就报错
                     if (!BusinessConstant.SUB_TYPE_PURCHASE_ORDER.equals(depotHead.getSubType())
                             && !BusinessConstant.SUB_TYPE_SALES_ORDER.equals(depotHead.getSubType())) {
-                        throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_DEPOT_FAILED_MSG);
+                        throw new BusinessException(ExceptionConstant.DEPOT_HEAD_DEPOT_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_DEPOT_FAILED_MSG);
                     }
 
                 }
@@ -383,12 +380,12 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
                 if(BusinessConstant.SUB_TYPE_TRANSFER.equals(depotHead.getSubType())){
                     if(StringUtils.hasText(obj.getString("anotherDepotId"))){
                         if (obj.getLong("anotherDepotId").equals(obj.getLong("depotId"))){
-                            throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_ANOTHER_DEPOT_EQUAL_FAILED_MSG);
+                            throw new BusinessException(ExceptionConstant.DEPOT_HEAD_ANOTHER_DEPOT_EQUAL_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_ANOTHER_DEPOT_EQUAL_FAILED_MSG);
                         }else{
                             depotItem.setAnotherDepotId(obj.getLong("anotherDepotId"));
                         }
                     }else{
-                        throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_ANOTHER_DEPOT_FAILED_MSG);
+                        throw new BusinessException(ExceptionConstant.DEPOT_HEAD_ANOTHER_DEPOT_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_ANOTHER_DEPOT_FAILED_MSG);
                     }
                 }
                 if (StringUtil.isExist(obj.get("taxRate"))) {
@@ -411,7 +408,7 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
                     BigDecimal stock = getStock(depotItem.getDepotId(), new MaterialExUnit(depotItem), token);
                     BigDecimal thisBasicNumber = depotItem.getBasicNumber() == null ? BigDecimal.ZERO : depotItem.getBasicNumber();
                     if(!"1".equals(systemConfigController.getCurrent().getMinusStockFlag()) && stock.compareTo(thisBasicNumber) < 0){
-                        throw new RuntimeException(ExceptionConstant.MATERIAL_STOCK_NOT_ENOUGH_MSG);
+                        throw new BusinessException(ExceptionConstant.MATERIAL_STOCK_NOT_ENOUGH_CODE, ExceptionConstant.MATERIAL_STOCK_NOT_ENOUGH_MSG);
                     }
                     //出库订单处理序列号，判断商品是否开启序列号，开启的售出序列号，未开启的跳过
                     if(!BusinessConstant.SUB_TYPE_TRANSFER.equals(depotHead.getSubType())
@@ -445,7 +442,7 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
             }
 
         }else{
-            throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_ROW_FAILED_MSG);
+            throw new BusinessException(ExceptionConstant.DEPOT_HEAD_ROW_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_ROW_FAILED_MSG);
         }
     }
 
@@ -604,11 +601,11 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
                 String firstType = first.getString("mType");
                 String secondType = second.getString("mType");
                 if(!"组合件".equals(firstType) || !"普通子件".equals(secondType)){
-                    throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_CHECK_ASSEMBLE_EMPTY_MSG);
+                    throw new BusinessException(ExceptionConstant.DEPOT_HEAD_CHECK_ASSEMBLE_EMPTY_CODE, ExceptionConstant.DEPOT_HEAD_CHECK_ASSEMBLE_EMPTY_MSG);
                 }
             }else{
 
-                throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_CHECK_ASSEMBLE_EMPTY_MSG);
+                throw new BusinessException(ExceptionConstant.DEPOT_HEAD_CHECK_ASSEMBLE_EMPTY_CODE, ExceptionConstant.DEPOT_HEAD_CHECK_ASSEMBLE_EMPTY_MSG);
             }
         }
     }
@@ -660,22 +657,24 @@ public class DepotItemServiceImpl extends CommonServiceImpl<DepotItemMapper, Dep
 
     @Override
     public void updateCurrentStockFun(Long materialId, Long depotId, String token) {
-        List<MaterialCurrentStock> currentStocks = materialCurrentStockService.getListByKeyMap
-                (ImmutableMap.of("material_id", materialId, "depot_id", depotId));
-        MaterialCurrentStock currentStock = new MaterialCurrentStock();
-        currentStock.setMaterialId(materialId);
-        currentStock.setDepotId(depotId);
-        SystemConfig systemConfig = systemConfigController.getCurrent();
-        List<Long> depotIdList = getDeoptIdList(depotId, token, systemConfig.getDepotFlag());
-        String stockApprovalFlag = systemConfig.getStockApprovalFlag();
-        currentStock.setCurrentNumber(getStockByParam(depotIdList,materialId, stockApprovalFlag, null, null ));
-        if(currentStocks !=null && currentStocks.size()>0) {
-            Long mcsId = currentStocks.get(0).getId();
-            currentStock.setId(mcsId);
-            materialCurrentStockService.update(currentStock, new QueryWrapper<MaterialCurrentStock>()
-                    .eq("material_id", materialId).eq("depot_id", depotId));
-        } else {
-            materialCurrentStockService.save(currentStock);
+        if (materialId != null && depotId != null) {
+            List<MaterialCurrentStock> currentStocks = materialCurrentStockService.getListByKeyMap
+                    (ImmutableMap.of("material_id", materialId, "depot_id", depotId));
+            MaterialCurrentStock currentStock = new MaterialCurrentStock();
+            currentStock.setMaterialId(materialId);
+            currentStock.setDepotId(depotId);
+            SystemConfig systemConfig = systemConfigController.getCurrent();
+            List<Long> depotIdList = getDeoptIdList(depotId, token, systemConfig.getDepotFlag());
+            String stockApprovalFlag = systemConfig.getStockApprovalFlag();
+            currentStock.setCurrentNumber(getStockByParam(depotIdList,materialId, stockApprovalFlag, null, null ));
+            if(currentStocks !=null && currentStocks.size()>0) {
+                Long mcsId = currentStocks.get(0).getId();
+                currentStock.setId(mcsId);
+                materialCurrentStockService.update(currentStock, new QueryWrapper<MaterialCurrentStock>()
+                        .eq("material_id", materialId).eq("depot_id", depotId));
+            } else {
+                materialCurrentStockService.save(currentStock);
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.meteor.jsherp.service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.meteor.jsherp.domain.Function;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.meteor.jsherp.domain.UserBusiness;
@@ -31,4 +32,21 @@ public interface FunctionService extends IService<Function> {
      * @return
      */
     List<Function> getListByParent(String pNumber);
+
+    /**
+     * 根据用户id查询用户拥有权限的菜单
+     * @param ubType
+     * @param ubKeyId  用户id
+     * @param functionTreeMap
+     * @param tentId
+     * @return
+     */
+    JSONArray findRoleFunction(String ubType, String ubKeyId, Map<String, List<Function>> functionTreeMap, Long tentId);
+
+    /**
+     * 根据id查询用户拥有权限的菜单信息
+     * @param keyId
+     * @return
+     */
+    Map findRoleFunctionsById(String keyId);
 }

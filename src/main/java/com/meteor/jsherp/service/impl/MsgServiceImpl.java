@@ -45,7 +45,7 @@ public class MsgServiceImpl extends CommonServiceImpl<MsgMapper, Msg>
         User user = userService.getLoginUser(token);
         if (!"admin".equals(user.getLoginName())){
             QueryWrapper<Msg> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("user_id", user.getId()).like(StringUtils.hasText(name), "msg_title", name);
+            queryWrapper.eq(user != null, "user_id", user.getId()).like(StringUtils.hasText(name), "msg_title", name);
             Page<Msg> msgPage = new Page<>(currentPage, pageSize);
             msgMapper.selectPage(msgPage, queryWrapper);
             List<Msg> records = msgPage.getRecords();
@@ -56,6 +56,17 @@ public class MsgServiceImpl extends CommonServiceImpl<MsgMapper, Msg>
             return records;
         }
         return null;
+    }
+
+    @Override
+    public Integer counts(Map<String, String> paramMap) {
+        String search = paramMap.get("search");
+        JSONObject parse = JSONObject.parseObject(search);
+        String name =(String) parse.get("name");
+        String token = paramMap.get("token");
+        User user = userService.getLoginUser(token);
+        QueryWrapper<Msg> queryWrapper = new QueryWrapper<Msg>().eq(user != null, "user_id", user.getId()).like(StringUtils.hasText(name), "msg_title", name);
+        return count(queryWrapper);
     }
 }
 

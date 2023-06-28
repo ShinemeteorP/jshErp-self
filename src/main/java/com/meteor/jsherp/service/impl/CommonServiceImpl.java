@@ -1,5 +1,6 @@
 package com.meteor.jsherp.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -23,7 +24,7 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
     @Override
     public List<T> getListByKey(String key, Object value){
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(key, value);
+        queryWrapper.eq(value != null, key, value);
         List<T> ts = super.baseMapper.selectList(queryWrapper);
         return ts;
     }
@@ -34,7 +35,7 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
         Set<Map.Entry<String, Object>> entries = map.entrySet();
         for (Map.Entry<String, Object> e:
              entries) {
-            queryWrapper.eq(e.getKey(), e.getValue());
+            queryWrapper.eq(e.getValue() != null,e.getKey(), e.getValue());
         }
         List<T> ts = super.baseMapper.selectList(queryWrapper);
         return ts;
@@ -43,7 +44,7 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
     @Override
     public T getOneByKey(String key, Object value) {
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(key, value);
+        queryWrapper.eq(value != null, key, value);
         return super.baseMapper.selectOne(queryWrapper);
     }
 
@@ -53,7 +54,7 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
         Set<Map.Entry<String, Object>> entries = map.entrySet();
         for (Map.Entry<String, Object> e:
                 entries) {
-            queryWrapper.eq(e.getKey(), e.getValue());
+            queryWrapper.eq(e.getValue() != null, e.getKey(), e.getValue());
         }
         return super.baseMapper.selectOne(queryWrapper);
     }
@@ -75,6 +76,27 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
 
     @Override
     public int deleteBatch(String ids, String token) {
+        return 0;
+    }
+
+    @Override
+    public Integer counts(Map<String, String> parameterMap) {
+        return null;
+    }
+
+    @Override
+    public int checkName(Long id, String name) {
+        QueryWrapper<T> queryWrapper = new QueryWrapper<T>().ne(id != null, "id", id).eq(name != null, "name", name);
+        return super.baseMapper.selectCount(queryWrapper);
+    }
+
+    @Override
+    public int addObj(JSONObject obj, String token) {
+        return 0;
+    }
+
+    @Override
+    public int updateObj(JSONObject obj, String token) {
         return 0;
     }
 }

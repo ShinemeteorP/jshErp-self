@@ -7,6 +7,9 @@ import com.meteor.jsherp.response.BaseResponse;
 import com.meteor.jsherp.service.DepotService;
 import com.meteor.jsherp.service.UserService;
 import com.meteor.jsherp.utils.ResponseUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +23,7 @@ import javax.annotation.Resource;
  */
 @RequestMapping("/depot")
 @RestController
+@Api("仓库管理")
 public class DepotController {
 
     @Resource
@@ -32,17 +36,14 @@ public class DepotController {
     private SystemConfigController systemConfigController;
 
     @GetMapping("/findDepotByCurrentUser")
-    public BaseResponse findDepotByCurrentUser(@RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) String token){
+    @ApiOperation("根据当前登入用户获取有权限的仓库列表")
+    public BaseResponse findDepotByCurrentUser(@RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) @ApiParam("登入状态码") String token) {
         BaseResponse response = new BaseResponse();
-        try {
-            User user = userService.getLoginUser(token);
-            String depotFlag = systemConfigController.getCurrent().getDepotFlag();
-            JSONArray array = depotService.findDepotByUserId(user.getId(), depotFlag);
-            ResponseUtil.resSuccess(response, array);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            ResponseUtil.defaultServiceExceptionResponse(response);
-        }
+
+        User user = userService.getLoginUser(token);
+        String depotFlag = systemConfigController.getCurrent().getDepotFlag();
+        JSONArray array = depotService.findDepotByUserId(user.getId(), depotFlag);
+        ResponseUtil.resSuccess(response, array);
 
         return response;
     }

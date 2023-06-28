@@ -23,20 +23,18 @@ public class SequenceController {
 
     /**
      * 获取单据编号
+     *
      * @return
      */
     @GetMapping("/buildNumber")
-    public BaseResponse buildNumber(){
+    public BaseResponse buildNumber() {
         BaseResponse response = new BaseResponse();
-        try {
-            String numberStr = sequenceService.buildNumber();
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("defaultNumber", numberStr);
-            ResponseUtil.resSuccess(response, map);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            ResponseUtil.defaultServiceExceptionResponse(response);
-        }
+
+        String numberStr = sequenceService.buildNumber();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("defaultNumber", numberStr);
+        ResponseUtil.resSuccess(response, map);
+
         return response;
     }
 

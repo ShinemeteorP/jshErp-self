@@ -23,4 +23,35 @@
         create_time,update_time,tenant_id,
         delete_flag
     </sql>
+
+    <resultMap id="BaseTreeNodeMap" type="BaseTreeNode">
+        <result column="id" property="id" jdbcType="BIGINT"/>
+        <result column="id" property="key" jdbcType="BIGINT"/>
+        <result column="id" property="value" jdbcType="BIGINT"/>
+        <result column="org_abr" property="title"/>
+        <result column="org_no" property="attributes"/>
+        <collection property="children" javaType="java.util.List" select="getNextTree" ofType="BaseTreeNode" column="{currentId = currentId, parentId = id}"/>
+    </resultMap>
+<!--    List<BaseTreeNode> getOrganizationTree(Long currentId);-->
+    <select id="getOrganizationTree" resultMap="BaseTreeNodeMap">
+        select id, org_abr, org_no, #{currentId} as currentId
+        from jsh_organization
+        where ifnull(delete_flag, '0') = '0'
+        <if test="currentId != null">
+            and id != #{currentId}
+        </if>
+        and parent_id is null
+        order by sort asc
+    </select>
+<!--    List<BaseTreeNode> getNextTree(Long currentId);-->
+    <select id="getNextTree" resultMap="BaseTreeNodeMap">
+        select id, org_abr, org_no, #{currentId} as currentId
+        from jsh_organization
+        where ifnull(delete_flag, '0') = '0'
+        <if test="currentId != null">
+            and id != #{currentId}
+        </if>
+        and parent_id = #{parentId}
+        order by sort asc
+    </select>
 </mapper>

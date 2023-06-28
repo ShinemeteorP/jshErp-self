@@ -28,4 +28,28 @@ public interface SupplierService extends IService<Supplier>, CommonService<Suppl
      * @return
      */
     int updateAdvanceInById(Long id, BigDecimal advanceIn);
+
+    /**
+     * 查找当前租户下有效的会员列表信息
+     * @return
+     */
+    JSONArray findBySelectMember();
+
+    /**
+     * 查找当前租户下有效的供应商列表信息
+     * @return
+     */
+    JSONArray findBySelectSup();
+
+    /**
+     *查找当前租户下有效的客户信息，根据系统的客户设置开关和用户客户权限，返回部分符合权限的客户信息
+     * @return
+     */
+    JSONArray findBySelectCus(String token);
+    /**
+     *查找当前租户下有效的供应商列表信息和
+     * 当前租户下有效的客户信息，根据系统的客户设置开关和用户客户权限，返回部分符合权限的客户信息
+     * @return
+     */
+    JSONArray findBySelectOrgan(String token);
 }

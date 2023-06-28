@@ -8,6 +8,7 @@ import com.meteor.jsherp.domain.DepotItem;
 import com.meteor.jsherp.domain.SerialNumber;
 import com.meteor.jsherp.domain.User;
 import com.meteor.jsherp.domain.extand.SerialNumberEx;
+import com.meteor.jsherp.exception.BusinessException;
 import com.meteor.jsherp.mapper.SerialNumberMapper;
 import com.meteor.jsherp.service.SerialNumberService;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class SerialNumberServiceImpl extends ServiceImpl<SerialNumberMapper, Ser
                     return serialNumberMapper.insert(serialNumber);
                 }else{
                     if(!number.equals(serialNumberList.get(0).getInBillNo())){
-                        throw new RuntimeException(ExceptionConstant.SERIAL_NUMBER_ALREADY_EXISTS_MSG);
+                        throw new BusinessException(ExceptionConstant.SERIAL_NUMBER_ALREADY_EXISTS_CODE, ExceptionConstant.SERIAL_NUMBER_ALREADY_EXISTS_MSG);
                     }
                 }
             }

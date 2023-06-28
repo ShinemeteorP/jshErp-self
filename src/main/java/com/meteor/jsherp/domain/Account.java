@@ -69,6 +69,7 @@ public class Account implements Serializable {
      */
     private String deleteFlag;
 
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 

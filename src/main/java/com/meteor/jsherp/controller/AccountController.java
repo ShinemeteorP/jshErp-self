@@ -4,6 +4,9 @@ import com.meteor.jsherp.domain.Account;
 import com.meteor.jsherp.response.BaseResponse;
 import com.meteor.jsherp.service.AccountService;
 import com.meteor.jsherp.utils.ResponseUtil;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +21,7 @@ import java.util.List;
  */
 @RequestMapping("/account")
 @RestController
+@Api(tags = "账户管理" , value = "账户管理控制器")
 public class AccountController {
 
     @Resource
@@ -28,17 +32,14 @@ public class AccountController {
      * @return
      */
     @GetMapping("/getAccount")
+    @ApiOperation("获取租户下所有可用Account")
     public BaseResponse getAccount(){
         BaseResponse response = new BaseResponse();
-        try {
-            HashMap<String, Object> map = new HashMap<>();
-            List<Account> accountList = accountService.getAccountList();
-            map.put("accountList", accountList);
-            ResponseUtil.resSuccess(response, map);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            ResponseUtil.defaultServiceExceptionResponse(response);
-        }
+
+        HashMap<String, Object> map = new HashMap<>();
+        List<Account> accountList = accountService.getAccountList();
+        map.put("accountList", accountList);
+        ResponseUtil.resSuccess(response, map);
         return response;
     }
 }

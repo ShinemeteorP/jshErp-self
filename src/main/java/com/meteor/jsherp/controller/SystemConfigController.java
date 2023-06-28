@@ -6,6 +6,7 @@ import com.meteor.jsherp.response.BaseResponse;
 import com.meteor.jsherp.service.SystemConfigService;
 import com.meteor.jsherp.service.UserService;
 import com.meteor.jsherp.utils.ResponseUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import java.nio.charset.StandardCharsets;
  */
 @RequestMapping("/systemConfig")
 @RestController
+@Slf4j
 public class SystemConfigController {
     @Resource
     private SystemConfigService systemConfigService;
@@ -44,15 +46,12 @@ public class SystemConfigController {
     @GetMapping("/getCurrentInfo")
     public BaseResponse getSystemConfig(){
         BaseResponse response = new BaseResponse();
-        try {
+
             if (systemConfig == null){
                 systemConfig = systemConfigService.getOne(null);
             }
             ResponseUtil.resSuccess(response, systemConfig);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            ResponseUtil.defaultServiceExceptionResponse(response);
-        }
+
         return response;
     }
 
@@ -64,13 +63,10 @@ public class SystemConfigController {
     public BaseResponse getFileSizeLimit(){
         BaseResponse response = new BaseResponse();
         Long size = null;
-        try {
+
             size = maxFileSize > maxRequestSize ? maxRequestSize : maxFileSize;
             ResponseUtil.resSuccess(response, size);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            ResponseUtil.defaultServiceExceptionResponse(response);
-        }
+
         return response;
     }
 
@@ -88,9 +84,9 @@ public class SystemConfigController {
      * @return
      */
     @PostMapping("/upload")
-    public BaseResponse upload(MultipartFile file, @RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) String token, HttpServletRequest request){
+    public BaseResponse upload(MultipartFile file, @RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) String token, HttpServletRequest request) throws IOException {
         BaseResponse response = new BaseResponse();
-        try {
+
             String bizPath = request.getParameter("biz");
             String name = request.getParameter("name");
             if(bizPath == null){
@@ -104,10 +100,7 @@ public class SystemConfigController {
             }else {
                 ResponseUtil.defaultServiceExceptionResponse(response);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            ResponseUtil.defaultServiceExceptionResponse(response);
-        }
+
 
         return response;
     }
@@ -150,6 +143,7 @@ public class SystemConfigController {
                 response.flushBuffer();
             } catch (IOException e) {
                 //日志打印
+                log.error("预览图片失败", e.getMessage(), e);
                 e.printStackTrace();
                 response.setStatus(404);
             }finally {

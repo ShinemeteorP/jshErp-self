@@ -31,4 +31,22 @@ public interface UserBusinessService extends IService<UserBusiness>, CommonServi
      * @param object
      */
     int insertUserBusiness(JSONObject object);
+
+    /**
+     * 根据type和keyId，查询UserBusiness对象，并返回其Id
+     * @param type
+     * @param keyId
+     * @return
+     */
+    Long checkIsValueExist(String type, Long keyId);
+
+    /**
+     * 修改用户的按钮权限，
+     * @param btnStr 新权限内容
+     * @param keyId
+     * @param type
+     * @return
+     */
+    int updateBtnStr(String btnStr, Long keyId, String type);
+
 }

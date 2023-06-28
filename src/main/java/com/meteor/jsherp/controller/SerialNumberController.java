@@ -46,28 +46,25 @@ public class SerialNumberController {
                                                   @RequestParam("depotId") Long depotId,
                                                   @RequestParam("barCode") String barCode,
                                                   @RequestParam("page") Integer page,
-                                                  @RequestParam("rows") Integer rows){
+                                                  @RequestParam("rows") Integer rows) {
         BaseResponse response = new BaseResponse();
-        try {
-            String number = "";
-            HashMap<String, Object> map = new HashMap<>();
-            if(depotItemId != null){
-                DepotItem depotItem = depotItemService.getById(depotItemId);
-                number = depotHeadService.getOneByKey("header_id", depotItem.getHeaderId()).getNumber();
-            }
-            List<SerialNumberEx> serialNumberList = serialNumberService.getSerialNumberListByParam(name, number, depotId, barCode, (page - 1) * rows, rows);
-            for (SerialNumberEx s:
-                 serialNumberList) {
-                s.setCreateTimeStr(new SimpleDateFormat(BusinessConstant.DEFAULT_DATETIME_FORMAT).format(s.getCreatorName()));
-            }
-            Long total = serialNumberService.getSerialNumberCountByParam(name, number, depotId, barCode);
-            map.put("total", total);
-            map.put("rows", serialNumberList);
-            ResponseUtil.resSuccess(response, map);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            ResponseUtil.defaultServiceExceptionResponse(response);
+
+        String number = "";
+        HashMap<String, Object> map = new HashMap<>();
+        if (depotItemId != null) {
+            DepotItem depotItem = depotItemService.getById(depotItemId);
+            number = depotHeadService.getOneByKey("header_id", depotItem.getHeaderId()).getNumber();
         }
+        List<SerialNumberEx> serialNumberList = serialNumberService.getSerialNumberListByParam(name, number, depotId, barCode, (page - 1) * rows, rows);
+        for (SerialNumberEx s :
+                serialNumberList) {
+            s.setCreateTimeStr(new SimpleDateFormat(BusinessConstant.DEFAULT_DATETIME_FORMAT).format(s.getCreatorName()));
+        }
+        Long total = serialNumberService.getSerialNumberCountByParam(name, number, depotId, barCode);
+        map.put("total", total);
+        map.put("rows", serialNumberList);
+        ResponseUtil.resSuccess(response, map);
+
         return response;
     }
 }

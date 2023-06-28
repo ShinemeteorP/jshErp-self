@@ -29,4 +29,77 @@
         ismanager,isystem,Status,
         description,remark,tenant_id
     </sql>
+
+    <resultMap id="userEx" extends="BaseResultMap" type="UserEx">
+        <result column="orgaId" jdbcType="BIGINT" property="orgaId" />
+        <result column="orgAbr" jdbcType="VARCHAR" property="orgAbr" />
+        <result column="userBlngOrgaDsplSeq" jdbcType="VARCHAR" property="userBlngOrgaDsplSeq" />
+        <result column="orgaUserRelId" jdbcType="BIGINT" property="orgaUserRelId" />
+        <collection property="roleId" fetchType="eager" select="selectRoleIdByUserEx" column="id"/>
+        <collection property="roleName" fetchType="eager" select="selectRoleNameByUserEx" column="id"/>
+
+    </resultMap>
+<!--    List<UserEx> selectUserListByUserNameAndLoginName(String userName, String loginName, int start, Integer pageSize);-->
+    <select id="selectUserListByUserNameAndLoginName" resultMap="userEx">
+        select user.*, orga.id orgaId, orga.org_abr orgAbr, our.user_blng_orga_dspl_seq userBlngOrgaDsplSeq, our.id orgaUserRelId
+        from jsh_user user
+        left join jsh_orga_user_rel our on user.id = our.user_id and ifnull(our.delete_flag, '0') = '0'
+        left join jsh_organization orga on our.orga_id = orga.id and ifnull(orga.delete_flag, '0') = '0'
+        where user.status != '1'
+        <if test="userName != null">
+            <bind name="userNameLike" value="'%' + userName + '%'"/>
+            and user.username like #{userNameLike}
+        </if>
+        <if test="loginName != null">
+            <bind name="loginNameLike" value="'%' + loginName + '%'"/>
+            and user.login_name like #{loginNameLike}
+        </if>
+        order by our.user_blng_orga_dspl_seq,user.id desc
+        <if test="start != null and pageSize != null">
+            limit #{start}, #{pageSize}
+        </if>
+    </select>
+
+<!--    Long selectRoleIdByUserEx(Long uId);-->
+    <select id="selectRoleIdByUserEx" resultType="long">
+        select r.id from jsh_role r left join jsh_user_business ub on ub.value = concat('[',r.id,']') and ifnull(ub.delete_flag,'0') = '0'
+        where ub.type = 'UserRole'
+        and ifnull(r.delete_flag, '0') = '0'
+        and ub.key_id = #{uId}
+        limit 0,1
+    </select>
+<!--    String selectRoleNameByUserEx(Long uId);-->
+    <select id="selectRoleNameByUserEx" resultType="string">
+        select r.name from jsh_role r left join jsh_user_business ub on ub.value = concat('[',r.id,']') and ifnull(ub.delete_flag,'0') = '0'
+        where ub.type = 'UserRole'
+          and ifnull(r.delete_flag, '0') = '0'
+          and ub.key_id = #{uId}
+            limit 0,1
+    </select>
+<!--    Integer countsByUserNameAndLoginName(String userName, String loginName);-->
+    <select id="countsByUserNameAndLoginName" resultType="int">
+        select count(1)
+        from jsh_user user
+        left join jsh_orga_user_rel our on user.id = our.user_id and ifnull(our.delete_flag, '0') = '0'
+        left join jsh_organization orga on our.orga_id = orga.id and ifnull(orga.delete_flag, '0') = '0'
+        where user.status != '1'
+        <if test="userName != null">
+            <bind name="userNameLike" value="'%' + userName + '%'"/>
+            and user.username like #{userNameLike}
+        </if>
+        <if test="loginName != null">
+            <bind name="loginNameLike" value="'%' + loginName + '%'"/>
+            and user.login_name like #{loginNameLike}
+        </if>
+    </select>
+<!--    int getLeaderListByOrgaId(Long orgaId, Long id);-->
+    <select id="getLeaderListByOrgaId" resultType="int">
+        select count(1)
+        from jsh_user u left join jsh_orga_user_rel our on our.user_id = u.id and ifnull(our.delete_flag, '0') = '0'
+        where u.Status = '0'
+        and u.leader_flag = '1' and our.orga_id = #{orgaId}
+        <if test="id != null">
+            and u.id != #{id}
+        </if>
+    </select>
 </mapper>

@@ -80,7 +80,30 @@ public interface DepotHeadMapper extends BaseMapper<DepotHead> {
      */
     List<DepotHeadEx> getDepotHeadDetailByNumber(String number);
 
+    /**
+     * 根据查询条件，返回总的符合条件的记录数
+     * @param type
+     * @param subType
+     * @param userIdList
+     * @param hasDebt
+     * @param statusArray
+     * @param purchaseStatusArray
+     * @param number
+     * @param linkNumber
+     * @param beginTime
+     * @param endTime
+     * @param materialParam
+     * @param organId
+     * @param organArray
+     * @param creator
+     * @param depotId
+     * @param depotArray
+     * @param accountId
+     * @param remark
+     * @return
+     */
 
+    Integer count(String type, String subType, long[] userIdList, String hasDebt, String[] statusArray, String[] purchaseStatusArray, String number, String linkNumber, String beginTime, String endTime, String materialParam, Long organId, List<Organization> organArray, Long creator, Long depotId, List<Long> depotArray, Long accountId, String remark);
 }
 
 

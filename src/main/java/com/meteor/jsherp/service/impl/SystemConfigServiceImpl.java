@@ -1,21 +1,31 @@
 package com.meteor.jsherp.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.meteor.jsherp.domain.SystemConfig;
 import com.meteor.jsherp.mapper.SystemConfigMapper;
+import com.meteor.jsherp.service.LogService;
 import com.meteor.jsherp.service.SystemConfigService;
+import com.meteor.jsherp.service.common.ResourceInfo;
 import com.meteor.jsherp.utils.FileUtils;
+import com.meteor.jsherp.utils.StringUtil;
+import io.swagger.models.auth.In;
 import org.springframework.stereotype.Service;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
 * @author 刘鑫
@@ -23,8 +33,15 @@ import java.io.IOException;
 * @createDate 2023-04-13 18:07:56
 */
 @Service
+@ResourceInfo("systemConfig")
 public class SystemConfigServiceImpl extends CommonServiceImpl<SystemConfigMapper, SystemConfig>
     implements SystemConfigService{
+
+    @Resource
+    private SystemConfigMapper systemConfigMapper;
+
+    @Resource
+    private LogService logService;
 
     @Override
     public String uploadFile(MultipartFile file, String bizPath, String name, String filePath) throws IOException {
@@ -74,6 +91,27 @@ public class SystemConfigServiceImpl extends CommonServiceImpl<SystemConfigMappe
         String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         return new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, path);
+    }
+
+    @Override
+    public List<? extends SystemConfig> select(Map<String, String> paramMap) {
+        String search = paramMap.get("search");
+        String companyName = StringUtil.getInfo(search, "companyName");
+        Integer currentPage = Integer.parseInt(paramMap.get("currentPage"));
+        Integer pageSize = Integer.parseInt(paramMap.get("pageSize"));
+        Page<SystemConfig> page = new Page<>(currentPage, pageSize);
+        QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<SystemConfig>().like(StringUtils.hasText(companyName), "company_name", companyName);
+        page = systemConfigMapper.selectPage(page, queryWrapper);
+
+        return page.getRecords();
+    }
+
+    @Override
+    public int updateObj(JSONObject obj, String token) {
+        SystemConfig systemConfig = JSONObject.parseObject(obj.toJSONString(), SystemConfig.class);
+        int result = systemConfigMapper.updateById(systemConfig);
+        logService.insertLog("系统配置","修改id为 " + systemConfig.getId() + " 的系统配置", 1);
+        return result;
     }
 }
 

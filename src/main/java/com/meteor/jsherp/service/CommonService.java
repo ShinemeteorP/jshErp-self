@@ -1,6 +1,8 @@
 package com.meteor.jsherp.service;
 
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.List;
 import java.util.Map;
 
@@ -71,4 +73,35 @@ public interface CommonService<T> {
      * @return
      */
     int deleteBatch(String ids, String token);
+
+    /**
+     * 根据条件查询总数量
+     * @param parameterMap
+     * @return
+     */
+    Integer counts(Map<String, String> parameterMap);
+
+    /**
+     * 根据id和名字查询，不等于该id但名字与与这个相等的记录数量
+     * 实现类默认实现了id列名就是id，名字列名就是name的情况，其余情况需要子类自己实现
+     * @param id
+     * @param name
+     * @return
+     */
+    int checkName(Long id, String name);
+
+    /**
+     * 根据对象新增一条记录
+     * @param obj
+     * @param token
+     * @return
+     */
+    int addObj(JSONObject obj, String token);
+    /**
+     * 根据对象更新一条记录
+     * @param obj
+     * @param token
+     * @return
+     */
+    int updateObj(JSONObject obj, String token);
 }

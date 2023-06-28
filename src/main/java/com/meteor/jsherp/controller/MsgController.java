@@ -25,20 +25,18 @@ public class MsgController {
 
     /**
      * 根据消息状态获取消息列表
+     *
      * @param status 消息状态，1表示未读，2表示已读
      * @return
      */
     @GetMapping("/getMsgByStatus")
-    public BaseResponse getMsgByStatus(@RequestParam("status") String status){
+    public BaseResponse getMsgByStatus(@RequestParam("status") String status) {
 
         BaseResponse response = new BaseResponse();
-        try {
-            List<Msg> msgList = msgService.getListByKey("status", status);
-            ResponseUtil.resSuccess(response, msgList);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            ResponseUtil.defaultServiceExceptionResponse(response);
-        }
+
+        List<Msg> msgList = msgService.getListByKey("status", status);
+        ResponseUtil.resSuccess(response, msgList);
+
         return response;
     }
 }

@@ -2,9 +2,11 @@ package com.meteor.jsherp.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.meteor.jsherp.constant.ErpAllConstant;
 import com.meteor.jsherp.domain.Supplier;
 import com.meteor.jsherp.service.SupplierService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,21 +25,43 @@ public class SupplierController {
     private SupplierService supplierService;
 
     @PostMapping("/findBySelect_retail")
-    public JSONArray findBySelect_retail(){
-        JSONArray array = new JSONArray();
-        try {
-            List<Supplier> dataList = supplierService.findBySelect("会员");
-            for (Supplier supplier:
-                 dataList) {
-                JSONObject object = new JSONObject();
-                object.put("id", supplier.getId());
-                object.put("supplier", supplier.getSupplier());
-                object.put("advanceIn", supplier.getAdvanceIn());
-                array.add(object);
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+    public JSONArray findBySelect_retail() {
+        JSONArray array = null;
+
+        array = supplierService.findBySelectMember();
+
+        return array;
+    }
+
+    @PostMapping("/findBySelect_sup")
+    public JSONArray findBySelect_sup() {
+        JSONArray array = null;
+
+        array = supplierService.findBySelectSup();
+
+        return array;
+    }
+
+    @PostMapping("/findBySelect_cus")
+    public JSONArray findBySelect_cus(@RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) String token) {
+        JSONArray array = null;
+
+        array = supplierService.findBySelectCus(token);
+
+        return array;
+    }
+
+    /**
+     * 查找往来单位，含供应商和客户信息-下拉框
+     *
+     * @return
+     */
+    @PostMapping("/findBySelect_organ")
+    public JSONArray findBySelect_organ(@RequestHeader(ErpAllConstant.REQUEST_TOKEN_KEY) String token) {
+        JSONArray array = null;
+
+        array = supplierService.findBySelectOrgan(token);
+
         return array;
     }
 }

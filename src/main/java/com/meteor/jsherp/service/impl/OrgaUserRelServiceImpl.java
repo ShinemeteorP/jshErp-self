@@ -6,9 +6,11 @@ import com.meteor.jsherp.domain.OrgaUserRel;
 import com.meteor.jsherp.domain.User;
 import com.meteor.jsherp.mapper.OrgaUserRelMapper;
 import com.meteor.jsherp.service.OrgaUserRelService;
+import com.meteor.jsherp.service.UserService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
 * @author 刘鑫
@@ -22,6 +24,9 @@ public class OrgaUserRelServiceImpl extends CommonServiceImpl<OrgaUserRelMapper,
     @Resource
     private OrgaUserRelMapper orgaUserRelMapper;
 
+    @Resource
+    private UserService userService;
+
     @Override
     public long[] getUserIdListByRole(long userId, String roleType) {
         switch (roleType){
@@ -33,6 +38,24 @@ public class OrgaUserRelServiceImpl extends CommonServiceImpl<OrgaUserRelMapper,
         }
 
         return null;
+    }
+
+    @Override
+    public int addOrgaUserRel(OrgaUserRel orgaUserRel, String token) {
+        User user = userService.getLoginUser(token);
+        orgaUserRel.setUpdateTime(new Date());
+        orgaUserRel.setCreateTime(new Date());
+        orgaUserRel.setUpdater(user.getId());
+        orgaUserRel.setCreator(user.getId());
+        return orgaUserRelMapper.insert(orgaUserRel);
+    }
+
+    @Override
+    public int updateOrgeUserRel(OrgaUserRel orgaUserRel, String token) {
+        User user = userService.getLoginUser(token);
+        orgaUserRel.setUpdateTime(new Date());
+        orgaUserRel.setUpdater(user.getId());
+        return orgaUserRelMapper.updateById(orgaUserRel);
     }
 }
 

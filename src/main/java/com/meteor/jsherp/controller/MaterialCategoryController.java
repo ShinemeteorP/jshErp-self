@@ -24,19 +24,17 @@ public class MaterialCategoryController {
     private MaterialCategoryService materialCategoryService;
 
     @GetMapping("/getMaterialCategoryTree")
-    public JSONArray getMaterialCategoryTree(@RequestParam("id") Long id){
+    public JSONArray getMaterialCategoryTree(@RequestParam("id") Long id) {
         JSONArray array = new JSONArray();
-        try {
-            List<BaseTreeNode> nodeList = materialCategoryService.getMaterialCategoryTree(id);
-            if(nodeList != null && nodeList.size() > 0){
-                for (BaseTreeNode node:
-                     nodeList) {
-                    array.add(JSON.parseObject(JSON.toJSONString(node)));
-                }
+
+        List<BaseTreeNode> nodeList = materialCategoryService.getMaterialCategoryTree(id);
+        if (nodeList != null && nodeList.size() > 0) {
+            for (BaseTreeNode node :
+                    nodeList) {
+                array.add(JSON.parseObject(JSON.toJSONString(node)));
             }
-        } catch (Exception exception) {
-            exception.printStackTrace();
         }
+
         return array;
     }
 

@@ -19,4 +19,7 @@ public interface OrgaUserRelService extends IService<OrgaUserRel>, CommonService
      */
     long[] getUserIdListByRole(long userId, String roleType);
 
+    int addOrgaUserRel(OrgaUserRel orgaUserRel, String token);
+
+    int updateOrgeUserRel(OrgaUserRel orgaUserRel, String token);
 }

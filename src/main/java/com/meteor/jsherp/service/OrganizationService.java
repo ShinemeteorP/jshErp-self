@@ -1,7 +1,10 @@
 package com.meteor.jsherp.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.meteor.jsherp.domain.Organization;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.meteor.jsherp.domain.extand.BaseTreeNode;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,4 +23,20 @@ public interface OrganizationService extends IService<Organization> , CommonServ
      * @return
      */
     List<Organization> getOrangArray(Long id, String subType, String purchaseStatus);
+
+    /**
+     * 获取除当前组织id以外的组织树节点列表
+     * @return
+     */
+    List<BaseTreeNode> getOrganizationTreeById(Long currentId);
+
+    /**
+     * 根据id返回机构对象所有相关信息
+     * @param id
+     * @return
+     */
+    JSONObject findById(Long id);
+
+    @Transactional(rollbackFor = Exception.class)
+    int deleteBatchIds(String ids, String token);
 }

@@ -1,12 +1,9 @@
 package com.meteor.jsherp.filter;
 
 import com.meteor.jsherp.constant.ErpAllConstant;
-import com.meteor.jsherp.constant.UserConstant;
 import com.meteor.jsherp.domain.User;
 import com.meteor.jsherp.service.UserService;
 import org.springframework.util.StringUtils;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilterChain;
 
 import javax.annotation.Resource;
 import javax.servlet.*;
@@ -25,7 +22,7 @@ import java.util.regex.Pattern;
 @WebFilter(urlPatterns = "/*", initParams = {@WebInitParam(name = "ignorePath", value = "/jshERP-boot/user/login#" +
         "/jshERP-boot/user/registerUser#/jshERP-boot/user/randomImage#/jshERP-boot/platformConfig/getPlatform#" +
         "/jshERP-boot/v2/api-docs#/jshERP-boot/webjars#/jshERP-boot/systemConfig/static"),
-        @WebInitParam(name = "ignoreUrl", value = ".ico#/doc.html")})
+        @WebInitParam(name = "ignoreUrl", value = ".ico#.html#swagger")})
 public class CheckUserFilter implements Filter {
 
     private static final String IGNORE_PATH = "ignorePath";

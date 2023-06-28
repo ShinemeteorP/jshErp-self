@@ -13,6 +13,7 @@ import com.meteor.jsherp.controller.SystemConfigController;
 import com.meteor.jsherp.domain.*;
 import com.meteor.jsherp.domain.extand.DepotHeadExReBody;
 import com.meteor.jsherp.domain.extand.DepotHeadEx;
+import com.meteor.jsherp.exception.BusinessException;
 import com.meteor.jsherp.mapper.DepotHeadMapper;
 import com.meteor.jsherp.service.*;
 import com.meteor.jsherp.service.common.ResourceInfo;
@@ -82,6 +83,9 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
 
     @Resource
     private SerialNumberService serialNumberService;
+
+    @Resource
+    private LogService logService;
 
 
     @Override
@@ -232,23 +236,23 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
 
     @Override
     public List<DepotHeadEx> select(Map<String, String> paramMap) {
-        JSONObject search = (JSONObject) JSON.parse(paramMap.get("search"));
-        String type = (String) search.get("type");
-        String subType = (String) search.get("subType");
-        String roleType = (String) search.get("roleType");
-        String status = (String) search.get("status");
-        String hasDebt = (String) search.get("hasDebt");
-        String purchaseStatus = (String) search.get("purchaseStatus");
-        String number = (String) search.get("number");
-        String linkNumber = (String) search.get("linkNumber");
-        String beginTime = (String) search.get("beginTime");
-        String endTime = (String) search.get("endTime");
-        String materialParam = (String) search.get("materialParam");
-        String remark = (String) search.get("remark");
-        Long organId = StringUtil.parseStrLong((String) search.get("organId"));
-        Long creator = StringUtil.parseStrLong((String) search.get("creator"));
-        Long depotId = StringUtil.parseStrLong((String) search.get("depotId"));
-        Long accountId = StringUtil.parseStrLong((String) search.get("accountId"));
+        String search = paramMap.get("search");
+        String type = StringUtil.getInfo(search, "type");
+        String subType = StringUtil.getInfo(search,"subType");
+        String roleType = StringUtil.getInfo(search,"roleType");
+        String status = StringUtil.getInfo(search,"status");
+        String hasDebt = StringUtil.getInfo(search,"hasDebt");
+        String purchaseStatus = StringUtil.getInfo(search,"purchaseStatus");
+        String number = StringUtil.getInfo(search,"number");
+        String linkNumber = StringUtil.getInfo(search,"linkNumber");
+        String beginTime =StringUtil.getInfo(search,"beginTime");
+        String endTime = StringUtil.getInfo(search,"endTime");
+        String materialParam = StringUtil.getInfo(search,"materialParam");
+        String remark = StringUtil.getInfo(search, "remark");
+        Long organId = StringUtil.parseStrLong(StringUtil.getInfo( search,"organId"));
+        Long creator = StringUtil.parseStrLong(StringUtil.getInfo(search,"creator"));
+        Long depotId = StringUtil.parseStrLong(StringUtil.getInfo(search,"depotId"));
+        Long accountId = StringUtil.parseStrLong(StringUtil.getInfo(search,"accountId"));
         Integer currentPage = StringUtil.parseInteger(paramMap.get(ErpAllConstant.REQUEST_PARAM_CURRENT_PAGE));
         Integer pageSize = StringUtil.parseInteger(paramMap.get(ErpAllConstant.REQUEST_PARAM_PAGE_SIZE));
         User user = userService.getLoginUser(paramMap.get("token"));
@@ -269,6 +273,44 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
                 linkNumber, beginTime, endTime, materialParam, organId, organArray, creator, depotId, depotArray,
                 accountId, remark, (currentPage - 1) * pageSize, pageSize, personMap, accountMap);
         return depotHeadList;
+    }
+
+    @Override
+    public Integer counts(Map<String, String> paramMap) {
+        String search = paramMap.get("search");
+        String type = StringUtil.getInfo(search, "type");
+        String subType = StringUtil.getInfo(search,"subType");
+        String roleType = StringUtil.getInfo(search,"roleType");
+        String status = StringUtil.getInfo(search,"status");
+        String hasDebt = StringUtil.getInfo(search,"hasDebt");
+        String purchaseStatus = StringUtil.getInfo(search,"purchaseStatus");
+        String number = StringUtil.getInfo(search,"number");
+        String linkNumber = StringUtil.getInfo(search,"linkNumber");
+        String beginTime =StringUtil.getInfo(search,"beginTime");
+        String endTime = StringUtil.getInfo(search,"endTime");
+        String materialParam = StringUtil.getInfo(search,"materialParam");
+        String remark = StringUtil.getInfo(search, "remark");
+        Long organId = StringUtil.parseStrLong(StringUtil.getInfo( search,"organId"));
+        Long creator = StringUtil.parseStrLong(StringUtil.getInfo(search,"creator"));
+        Long depotId = StringUtil.parseStrLong(StringUtil.getInfo(search,"depotId"));
+        Long accountId = StringUtil.parseStrLong(StringUtil.getInfo(search,"accountId"));
+        User user = userService.getLoginUser(paramMap.get("token"));
+        long[] userIdList = orgaUserRelService.getUserIdListByRole(user.getId(), (String) roleType);
+
+        String[] statusArray = StringUtils.hasText(status) ? status.split(",") : null;
+        String[] purchaseStatusArray = StringUtils.hasText(status) ? purchaseStatus.split(",") : null;
+
+        List<Long> depotArray = null;
+        String depotFlag = systemConfigController.getCurrent().getDepotFlag();
+        if (!"销售订单".equals(subType) && !"采购订单".equals(subType)) {
+            depotArray = depotService.getDepotIds(user.getId(), depotFlag);
+        }
+        List<Organization> organArray = organizationService.getOrangArray(user.getId(), subType, purchaseStatus);
+        Map<Long, String> personMap = personService.getPersonIdAndName();
+        Map<Long, String> accountMap = accountService.getAccountIdAndName();
+        return depotHeadMapper.count(type, subType, userIdList, hasDebt, statusArray, purchaseStatusArray, number,
+                linkNumber, beginTime, endTime, materialParam, organId, organArray, creator, depotId, depotArray,
+                accountId, remark);
     }
 
     private List<DepotHeadEx> getDepotHeadBoList(String type, String subType, long[] userIdList,
@@ -350,6 +392,9 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
                 }
                 if (d.getSalesMan() != null){
                     List<Long> list = StringUtil.strToLongList(d.getSalesMan());
+                    if (list == null){
+                        list = new ArrayList<>();
+                    }
                     StringBuilder builder = new StringBuilder();
                     for (Long l:
                          list) {
@@ -416,13 +461,13 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
         DepotHead depotHead = JSONObject.parseObject(info, DepotHead.class);
         Integer count = depotHeadMapper.selectCount(new QueryWrapper<DepotHead>().eq("number", depotHead.getNumber()));
         if(count > 0){
-            throw new RuntimeException("number已存在，数据添加失败");
+            throw new BusinessException(ExceptionConstant.DEPOT_HEAD_BILL_NUMBER_EXIST_CODE, ExceptionConstant.DEPOT_HEAD_BILL_NUMBER_EXIST_MSG);
         }
         String subType = depotHead.getSubType();
         //结算账户校验
         if("采购".equals(subType) || "采购退货".equals(subType) || "销售".equals(subType)|| "销售退货".equals(subType)){
             if(StringUtils.hasText(depotHead.getAccountIdList()) && depotHead.getAccountId() != null){
-                throw new RuntimeException("结算账户不能为空");
+                throw new BusinessException(ExceptionConstant.DEPOT_HEAD_ACCOUNT_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_ACCOUNT_FAILED_MSG);
             }
         }
         if("销售退货".equals(subType) || "采购退货".equals(subType)){
@@ -451,7 +496,7 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
             }
             accountMoneySum = accountMoneySum.abs();
             if(!accountMoneySum.equals(depotHead.getChangeAmount().abs())){
-                throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_MANY_ACCOUNT_FAILED_MSG);
+                throw new BusinessException(ExceptionConstant.DEPOT_HEAD_MANY_ACCOUNT_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_MANY_ACCOUNT_FAILED_MSG);
             }
             depotHead.setAccountMoneyList(accountMoneyStr);
         }
@@ -462,7 +507,7 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
             if (changeAmount != null) {
                 changeAmount = changeAmount.abs();
                 if(depotHead.getDeposit().add(deposit).compareTo(changeAmount) > 0){
-                    throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_DEPOSIT_OVER_PRE_MSG);
+                    throw new BusinessException(ExceptionConstant.DEPOT_HEAD_DEPOSIT_OVER_PRE_CODE, ExceptionConstant.DEPOT_HEAD_DEPOSIT_OVER_PRE_MSG);
                 }
             }
         }
@@ -475,7 +520,7 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
                 supplier.setAdvanceIn(supplierAdvanceIn.subtract(depotHead.getTotalPrice()));
                 supplierService.updateById(supplier);
             }else{
-                throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_MEMBER_PAY_LACK_MSG);
+                throw new BusinessException(ExceptionConstant.DEPOT_HEAD_MEMBER_PAY_LACK_CODE, ExceptionConstant.DEPOT_HEAD_MEMBER_PAY_LACK_MSG);
             }
         }
         //  入库和出库处理单据子表信息，新增depotItem数据：
@@ -497,11 +542,11 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
                 if(StringUtils.hasText(depotHead.getLinkNumber())){
                     BigDecimal originalDebt = getOriginalRealDebt(depotHead.getLinkNumber(), depotHead.getNumber());
                     if(originalDebt.compareTo(debt) < 0){
-                        throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_BACK_BILL_DEBT_OVER_MSG);
+                        throw new BusinessException(ExceptionConstant.DEPOT_HEAD_BACK_BILL_DEBT_OVER_CODE, ExceptionConstant.DEPOT_HEAD_BACK_BILL_DEBT_OVER_MSG);
                     }
                 }else{
                     if(!debt.equals(BigDecimal.ZERO)){
-                        throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_BACK_BILL_DEBT_FAILED_MSG);
+                        throw new BusinessException(ExceptionConstant.DEPOT_HEAD_BACK_BILL_DEBT_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_BACK_BILL_DEBT_FAILED_MSG);
                     }
                 }
             }
@@ -610,21 +655,24 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
     public void updateDepotHeadAndDetail(DepotHeadExReBody depotHeadBody, String token) {
         String info = depotHeadBody.getInfo();
         String rows = depotHeadBody.getRows();
+        StringBuilder sb = new StringBuilder();
+
         DepotHead depotHead = JSONObject.parseObject(info, DepotHead.class);
+        sb = sb.append("修改单据" + depotHead.getNumber());
         Integer count = depotHeadMapper.selectCount(new QueryWrapper<DepotHead>().ne("id", depotHead.getId()).eq("number", depotHead.getNumber()));
         if(count > 0){
-            throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_BILL_NUMBER_EXIST_MSG);
+            throw new BusinessException(ExceptionConstant.DEPOT_HEAD_BILL_NUMBER_EXIST_CODE, ExceptionConstant.DEPOT_HEAD_BILL_NUMBER_EXIST_MSG);
         }
         DepotHead originalDh = depotHeadMapper.selectById(depotHead.getId());
         if(!"0".equals(originalDh.getStatus())){
-            throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_BILL_CANNOT_EDIT_MSG);
+            throw new BusinessException(ExceptionConstant.DEPOT_HEAD_BILL_CANNOT_EDIT_CODE, ExceptionConstant.DEPOT_HEAD_BILL_CANNOT_EDIT_MSG);
         }
 
         String subType = depotHead.getSubType();
         //结算账户校验
         if("采购".equals(subType) || "采购退货".equals(subType) || "销售".equals(subType)|| "销售退货".equals(subType)){
             if(StringUtils.hasText(depotHead.getAccountIdList()) && depotHead.getAccountId() != null){
-                throw new RuntimeException("结算账户不能为空");
+                throw new BusinessException(ExceptionConstant.DEPOT_HEAD_ACCOUNT_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_ACCOUNT_FAILED_MSG);
             }
         }
         if("销售退货".equals(subType) || "采购退货".equals(subType)){
@@ -645,7 +693,7 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
             }
             accountMoneySum = accountMoneySum.abs();
             if(!accountMoneySum.equals(depotHead.getChangeAmount().abs())){
-                throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_MANY_ACCOUNT_FAILED_MSG);
+                throw new BusinessException(ExceptionConstant.DEPOT_HEAD_MANY_ACCOUNT_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_MANY_ACCOUNT_FAILED_MSG);
             }
             depotHead.setAccountMoneyList(accountMoneyStr);
         }
@@ -656,7 +704,7 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
             if (changeAmount != null) {
                 changeAmount = changeAmount.abs();
                 if(depotHead.getDeposit().add(deposit).compareTo(changeAmount) > 0){
-                    throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_DEPOSIT_OVER_PRE_MSG);
+                    throw new BusinessException(ExceptionConstant.DEPOT_HEAD_DEPOSIT_OVER_PRE_CODE, ExceptionConstant.DEPOT_HEAD_DEPOSIT_OVER_PRE_MSG);
                 }
             }
         }
@@ -670,11 +718,12 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
                         depotHead.getTotalPrice()).add(originalDh.getTotalPrice()));
                 supplierService.updateById(supplier);
             }else{
-                throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_MEMBER_PAY_LACK_MSG);
+                throw new BusinessException(ExceptionConstant.DEPOT_HEAD_MEMBER_PAY_LACK_CODE, ExceptionConstant.DEPOT_HEAD_MEMBER_PAY_LACK_MSG);
             }
         }
         depotItemService.saveDetail(rows, depotHead, "update", token);
         //日志数据补充
+        logService.insertLog("单据", sb.toString() , 0);
     }
 
     @Override
@@ -736,10 +785,11 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
                 }
 
             }else{
-                throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_UN_AUDIT_DELETE_FAILED_MSG);
+                throw new BusinessException(ExceptionConstant.DEPOT_HEAD_UN_AUDIT_DELETE_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_UN_AUDIT_DELETE_FAILED_MSG);
             }
         }
         //日志数据增加
+        logService.insertLog("单据", sb.toString(), 1);
         return 1;
     }
     @Override
@@ -774,11 +824,11 @@ public class DepotHeadServiceImpl extends CommonServiceImpl<DepotHeadMapper, Dep
              depotHeads) {
             if(BusinessConstant.BILLS_STATUS_UN_AUDIT.equals(status)){
                 if(!BusinessConstant.BILLS_STATUS_AUDIT.equals(depotHead.getStatus())){
-                    throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_AUDIT_TO_UN_AUDIT_FAILED_MSG);
+                    throw new BusinessException(ExceptionConstant.DEPOT_HEAD_AUDIT_TO_UN_AUDIT_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_AUDIT_TO_UN_AUDIT_FAILED_MSG);
                 }
             }else if(BusinessConstant.BILLS_STATUS_AUDIT.equals(status)){
                 if(!BusinessConstant.BILLS_STATUS_UN_AUDIT.equals(depotHead.getStatus())){
-                    throw new RuntimeException(ExceptionConstant.DEPOT_HEAD_UN_AUDIT_TO_AUDIT_FAILED_MSG);
+                    throw new BusinessException(ExceptionConstant.DEPOT_HEAD_UN_AUDIT_TO_AUDIT_FAILED_CODE, ExceptionConstant.DEPOT_HEAD_UN_AUDIT_TO_AUDIT_FAILED_MSG);
                 }
             }
         }
